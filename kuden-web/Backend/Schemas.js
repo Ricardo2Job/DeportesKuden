@@ -91,28 +91,14 @@ const typeDefs = gql`
     }
     
     input PedidoInput {
-        cantidad: Int!
+        cantidad: int!
         usuario: ID!
         articulo: ID!
     }
     
     # DEFINICION DE EVALUACION
 
-    type Evaluacion {
-        estrellas: Int!
-    }
     
-    input EvaluacionInput {
-        estrellas: Int!
-    }
-    
-    # DEFINICION DE COMENTARIOS
-
-    type Comentarios {
-        comentario: String!
-        estado: String!
-        etiqueta: String!
-    }
 `;
 
 module.exports = typeDefs;

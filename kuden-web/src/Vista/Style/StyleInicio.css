@@ -1,0 +1,119 @@
+/* App.css */
+
+/* Estructura principal */
+.container {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    text-align: center;
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #222;
+  }
+  
+  .logo {
+    height: 50px;
+  }
+  
+  /* Menú de navegación */
+  .nav {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .nav-link {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .nav-link:hover {
+    text-decoration: underline;
+  }
+  
+  /* Desplegable */
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropbtn {
+    background-color: transparent;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    min-width: 150px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  /* Usuario */
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .user-icon {
+    font-size: 1.5rem;
+  }
+  
+  /* Carrusel */
+  .carousel {
+    width: 100%;
+    height: 400px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .carousel-image {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+  
+  /* Sección Custom */
+  .custom-section {
+    margin: 50px 0;
+  }
+  
+  .custom-btn {
+    background-color: #ff6f61;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: white;
+    font-size: 1rem;
+  }
+  
+  .custom-btn:hover {
+    background-color: #e65b50;
+  }
+  
+  /* Sección de Productos */
+  .products-section {
+    margin: 50px 0;
+  }
+  
+  /* Footer */
+  .footer {
+    background-color: #222;
+    padding: 20px;
+    margin-top: 50px;
+  }
+  

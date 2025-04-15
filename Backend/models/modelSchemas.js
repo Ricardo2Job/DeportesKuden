@@ -1,4 +1,5 @@
 const { Schema } = require('mongoose');
+const mongoose = require('mongoose');
 
 const usuarioSchema = new Schema({
     nombre: { type: String, required: true },
@@ -64,3 +65,27 @@ const imagenesSchema = new Schema({
     imagen: { type: String, required: true },
     nombre: { type: String, required: true }
 });
+
+const Usuario = mongoose.model('Usuario', usuarioSchema);
+const Direccion = mongoose.model('Direccion', direccionSchema);
+const Comuna = mongoose.model('Comuna', comunaSchema);
+const Ciudad = mongoose.model('Ciudad', ciudadSchema);
+const Region = mongoose.model('Region', regionSchema);
+const Pedido = mongoose.model('Pedido', pedidoSchema);
+const Evaluacion = mongoose.model('Evaluacion', evaluacionSchema);
+const Comentarios = mongoose.model('Comentarios', comentariosSchema);
+const Articulo = mongoose.model('Articulo', articuloSchema);
+const Imagenes = mongoose.model('Imagenes', imagenesSchema);
+
+module.exports = {
+    Usuario,
+    Direccion,
+    Comuna,
+    Ciudad,
+    Region,
+    Pedido,
+    Evaluacion,
+    Comentarios,
+    Articulo,
+    Imagenes
+};

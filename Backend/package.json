@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "apollo-server": "^3.13.0",
     "apollo-server-express": "^3.13.0",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.3",
@@ -9,6 +10,7 @@
     "express-graphql": "^0.12.0",
     "graphql": "^16.10.0",
     "graphql-tools": "^9.0.18",
+    "graphql-upload": "^17.0.0",
     "nodemon": "^3.1.9",
     "yarn": "^1.22.22"
   }

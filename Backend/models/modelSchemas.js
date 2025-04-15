@@ -42,7 +42,6 @@ const pedidoSchema = new Schema({
 
 const evaluacionSchema = new Schema({
     puntuacion: { type: Number, required: true, min: 1, max: 5 },
-    comentario: { type: String, required: true },
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' }
 });
 

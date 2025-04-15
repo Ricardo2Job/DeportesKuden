@@ -250,6 +250,7 @@ const typeDefs = gql`
 
         getEvaluacion(id: ID!)
         getEvaluaciones: [Evaluacion]
+        getEvaluacionByUsuario(usuario: ID!): [Evaluacion]
 
         # Queries para Comentarios
 
@@ -334,7 +335,7 @@ const typeDefs = gql`
         deleteArticulo(id: ID!): Alert
 
         # Mutation para Imagenes
-        addImagen(input: ImagenesInput): Imagenes
+        uploadImagen(input: ImagenesInput): Imagenes
         deleteImagen(id: ID!): Alert
 
         # Mutation para InformacionPagina

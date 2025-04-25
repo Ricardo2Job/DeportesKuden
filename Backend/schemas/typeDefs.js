@@ -1,7 +1,7 @@
-const { gql } = require("apollo-server-express");
+import { gql } from "apollo-server-express";
+
 
 const typeDefs = gql`
-
     #Alerta para mensajes de error o exito 
      
     type Alert {
@@ -13,7 +13,7 @@ const typeDefs = gql`
     type Usuario {
         id: ID!
         nombre: String!
-        contraseña: String!
+        contrasena: String!
         correo: String!
         telefono: String!
         rol: String!
@@ -22,7 +22,7 @@ const typeDefs = gql`
 
     input UsuarioInput {
         nombre: String!
-        contraseña: String!
+        contrasena: String!
         correo: String!
         telefono: String!
         rol: String!
@@ -159,7 +159,8 @@ const typeDefs = gql`
         nombre: String!
         imagen: String!              # Se hará con este formato para almacenar imagenes en el buffer
     }
-    
+    scalar Upload
+
     input ImagenesInput {
         file: Upload!
     }
@@ -201,12 +202,12 @@ const typeDefs = gql`
         # Queries para Usuario
 
         getUsuario(id: ID!): Usuario
-        getUsuarios: [Usuarios]
+        getUsuarios: [Usuario]
         getUsuariosByNombre(nombre: String!): [Usuario]
         getUsuariosByRol(rol: String!): [Usuario]
         getUsuariosByComuna(comuna: String!): [Usuario]
         getUsuariosByCiudad(ciudad: String!): [Usuario]
-        getUsuaruisByRegion(region: String!): [Usuario]
+        getUsuariosByRegion(region: String!): [Usuario]
 
         # Queries para Direccion
 
@@ -218,7 +219,7 @@ const typeDefs = gql`
 
         # Queries para Comuna
 
-        getComuna(id: ID!): Comuna
+        getComunaById(id: ID!): Comuna
         getComuna(nombre: String!): Comuna
         getComunas: [Comuna]
         getComunasByCiudad(ciudad: String!): [Comuna]
@@ -248,7 +249,7 @@ const typeDefs = gql`
 
         # Queries para Evaluacion
 
-        getEvaluacion(id: ID!)
+        getEvaluacion(id: ID!): Evaluacion
         getEvaluaciones: [Evaluacion]
         getEvaluacionByUsuario(usuario: ID!): [Evaluacion]
 
@@ -272,9 +273,9 @@ const typeDefs = gql`
 
         # Queries para Imagenes
 
-        getImagen(id: ID!): Imagen
+        getImagen(id: ID!): Imagenes
         getImagenes: [Imagenes]
-        getImagenByNombre(nombre: String!): Imagen
+        getImagenByNombre(nombre: String!): Imagenes
 
         # Queries para InformacionPagina
 
@@ -286,6 +287,9 @@ const typeDefs = gql`
         getContactos: [Contacto]
 
     }
+
+    # INICIOOOOOO DE LAS MUTACIONES
+
     type Mutation {
 
         # Mutation para Usuario
@@ -350,4 +354,4 @@ const typeDefs = gql`
     }
 `;
 
-module.exports = typeDefs;
+export {typeDefs};

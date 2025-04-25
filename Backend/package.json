@@ -10,8 +10,10 @@
     "express-graphql": "^0.12.0",
     "graphql": "^16.10.0",
     "graphql-tools": "^9.0.18",
-    "graphql-upload": "^17.0.0",
+    "graphql-upload-ts": "^2.1.2",
+    "mongoose": "^8.13.3",
     "nodemon": "^3.1.9",
     "yarn": "^1.22.22"
-  }
+  },
+  "type": "module"
 }

@@ -1,5 +1,5 @@
-const { Schema } = require('mongoose');
-const mongoose = require('mongoose');
+import { Schema } from 'mongoose';
+import {mongoose} from 'mongoose';
 
 const usuarioSchema = new Schema({
     nombre: { type: String, required: true },
@@ -76,8 +76,10 @@ const Evaluacion = mongoose.model('Evaluacion', evaluacionSchema);
 const Comentarios = mongoose.model('Comentarios', comentariosSchema);
 const Articulo = mongoose.model('Articulo', articuloSchema);
 const Imagenes = mongoose.model('Imagenes', imagenesSchema);
+const InformacionPagina = mongoose.model('InformacionPagina', new Schema({})); //TODO Definir el esquema de InformacionPagina
+const Contacto = mongoose.model('Contacto', new Schema({})); //TODO Definir el esquema de Contacto
 
-module.exports = {
+export {
     Usuario,
     Direccion,
     Comuna,
@@ -87,5 +89,8 @@ module.exports = {
     Evaluacion,
     Comentarios,
     Articulo,
-    Imagenes
-};
+    Imagenes,
+    InformacionPagina,
+    Contacto
+  };
+  

@@ -1,8 +1,21 @@
-const { get, add } = require('lodash');
-const {Usuario, Direccion, Comuna, Ciudad, Region, Pedido, Evaluacion, Comentaios, Articulo, Imagenes, InformacionPagina, Contacto} = require('../models');
-const { getEnterLeaverForKind } = require('graphql');
-const { GraphQLUpload } = require('graphql-upload');
-const { AutenticationError } = require('apollo-server');
+import {
+    Usuario,
+    Direccion,
+    Comuna,
+    Ciudad,
+    Region,
+    Pedido,
+    Evaluacion,
+    Comentarios,
+    Articulo,
+    Imagenes,
+    InformacionPagina,
+    Contacto
+  } from '../models/modelSchemas.js';
+import { GraphQLUpload } from 'graphql-upload-ts';
+
+import { AuthenticationError } from 'apollo-server-express';
+
 
 async function deletAll(model){
     try {
@@ -59,7 +72,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getUsuarioByNombre (obj, { nombre }){
+        async getUsuariosByNombre (obj, { nombre }){
             try {
                 const usuario = await Usuario.find({ nombre }).populate({
                     path: 'direccion',
@@ -79,7 +92,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getUsuarioByRol (obj, { rol }){
+        async getUsuariosByRol (obj, { rol }){
             try {
                 const usuario = await Usuario.find({ rol }).populate({
                     path: 'direccion',
@@ -99,7 +112,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getUsuarioByComuna (obj, { comuna }){
+        async getUsuariosByComuna (obj, { comuna }){
             try {
                 const usuario = await Usuario.find({ 'direccion.comuna': comuna }).populate({
                     path: 'direccion',
@@ -119,7 +132,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getUsuarioByCiudad (obj, { ciudad }){
+        async getUsuariosByCiudad (obj, { ciudad }){
             try {
                 const usuario = await Usuario.find({ 'direccion.comuna.ciudad': ciudad }).populate({
                     path: 'direccion',
@@ -139,7 +152,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getUsuarioByRegion (obj, { region }){
+        async getUsuariosByRegion (obj, { region }){
             try {
                 const usuario = await Usuario.find({ 'direccion.comuna.ciudad.region': region }).populate({
                     path: 'direccion',
@@ -178,7 +191,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getDireccionByComuna (obj, { comuna }){
+        async getDireccionesByComuna (obj, { comuna }){
             try {
                 const direccion = await Direccion.find({'direccion.comuna': comuna}).populate({
                     path: 'comuna',
@@ -195,7 +208,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getDireccionByCiudad (obj, { ciudad }){
+        async getDireccionesByCiudad (obj, { ciudad }){
             try {
                 const direccion = await Direccion.find({ 'comuna.ciudad.nombre': ciudad }).populate({
                     path: 'comuna',
@@ -212,7 +225,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getDireccionByRegion (obj, { region }){
+        async getDireccionesByRegion (obj, { region }){
             try {
                 const direccion = await Direccion.find({ 'comuna.ciudad.region.nombre': region }).populate({
                     path: 'comuna',
@@ -239,7 +252,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getComuna (obj, { id }){
+        async getComunaById (obj, { id }){
             try {
                 const comuna = await Comuna.findById(id);
                 return comuna;
@@ -248,7 +261,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getComunaByNombre (obj, { nombre }){
+        async getComuna (obj, { nombre }){
             try {
                 const comuna = await Comuna.find({ nombre });
                 return comuna;
@@ -257,7 +270,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getComunaByCiudad (obj, { ciudad }){
+        async getComunasByCiudad (obj, { ciudad }){
             try {
                 const comuna = await Comuna.find({ 'ciudad.nombre': ciudad }).populate({
                     path: 'ciudad',
@@ -269,7 +282,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getComunaByRegion (obj, { region }){
+        async getComunasByRegion (obj, { region }){
             try {
                 const comuna = await Comuna.find({ 'ciudad.region.nombre': region }).populate({
                     path: 'ciudad',
@@ -389,7 +402,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getPedidoByUsuario (obj, { usuario }){
+        async getPedidosByUsuario (obj, { usuario }){
             try {
                 const pedido = await Pedido.find({ usuario }).populate({
                     path : 'usuario',
@@ -405,7 +418,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getPedidoByArticulo (obj, { articulo }){
+        async getPedidosByArticulo (obj, { articulo }){
             try {
                 const pedido = await Pedido.find({ articulo }).populate({
                     path: 'articulo',
@@ -437,7 +450,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getPedidoByEstado (obj, { estado }){
+        async getPedidosByEstado (obj, { estado }){
             try {
                 const pedido = await Pedido.find({ estado }).populate({
                     path: 'articulo',
@@ -469,7 +482,7 @@ const resolvers = {
                 throw error;
             }
         },
-        async getPedidoByFecha (obj, { fecha }){
+        async getPedidosByFecha (obj, { fecha }){
             try {
                 const pedido = await Pedido.find({ fecha }).populate({
                     path: 'articulo',
@@ -1075,14 +1088,20 @@ const resolvers = {
             }
         },
         // Mutations para Imagenes
-        uploadImage: async (_, { file }) => {
+        uploadImagen: async (_, { file }) => {
             const { createReadStream, filename } = await file;
       
             // 1. Genera un nombre único para el archivo
             const uniqueName = `${Date.now()}-${filename}`;
             const filePath = path.join(__dirname, 'uploads', uniqueName);
-      
-            // 2. Guarda el archivo en el servidor
+            
+            // 2. Asegúrate de que la carpeta uploads exista
+            const uploadDir = path.join(__dirname, 'uploads');
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir);
+            }
+
+            // 3. Guarda el archivo en el servidor
             return new Promise((resolve, reject) => {
               createReadStream()
                 .pipe(createWriteStream(filePath))
@@ -1197,4 +1216,4 @@ const resolvers = {
     }
 };
 
-module.exports = resolvers;
+export {resolvers};

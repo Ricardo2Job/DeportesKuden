@@ -2,18 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Style/StyleInicio.css';
 
-const images = [
-  './Imagenes/Fondo1.png',
-  './Imagenes/Fondo2.png',
-  './Imagenes/Fondo3.png'
-];
-
 const App = () => {
   const [currentImage, setCurrentImage] = useState(0);
+  const imageCount = 3; // Número total de imágenes en el carrusel
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentImage((prevImage) => (prevImage + 1) % images.length);
+      setCurrentImage((prevImage) => (prevImage + 1) % imageCount);
     }, 7000);
     return () => clearInterval(interval);
   }, []);
@@ -22,33 +17,42 @@ const App = () => {
     <div className="container">
       {/* Header */}
       <header className="header">
-        <img src="../Imagenes/Logo.png" alt="Logo" className="logo" />
+        <Link to="/inicio" className="logo-link">
+          <div className="logo"></div>
+        </Link>
+        
         <nav className="nav">
           <Link to="/inicio" className="nav-link">Inicio</Link>
+          
           <div className="dropdown">
             <button className="dropbtn">Productos</button>
             <div className="dropdown-content">
-              {/* Aquí se agregarán productos más adelante */}
+              <Link to="/poleras">Poleras Deportivas</Link>
+              <Link to="/shorts">Shorts</Link>
+              <Link to="/accesorios">Accesorios</Link>
             </div>
           </div>
+          
           <Link to="/company" className="nav-link">Nuestra Compañía</Link>
           <Link to="/contact" className="nav-link">Contáctanos</Link>
         </nav>
+        
         <div className="user-menu">
           <div className="dropdown">
             <button className="dropbtn">Usuario</button>
             <div className="dropdown-content">
               <Link to="/">Iniciar Sesión</Link>
               <Link to="/register">Registrarse</Link>
+              <Link to="/account">Mi Cuenta</Link>
             </div>
           </div>
-          <i className="user-icon">👤</i>
+          <div className="user-icon">👤</div>
         </div>
       </header>
 
       {/* Carrusel */}
       <section className="carousel">
-        <img src={images[currentImage]} alt="Trabajo realizado" className="carousel-image" />
+        <div className={`carousel-image carousel-image-${currentImage}`}></div>
       </section>
 
       {/* Sección Custom */}
@@ -60,7 +64,8 @@ const App = () => {
       {/* Espacio para productos */}
       <section className="products-section">
         <h2>Próximamente: Personalización de Poleras Deportivas</h2>
-      </section>
+        <p>Diseña tu propia indumentaria deportiva con nuestro nuevo servicio de personalización exclusiva. Crea equipaciones únicas para tu equipo con los colores y diseños que prefieras.</p>
+      </section> 
 
       {/* Footer */}
       <footer className="footer">

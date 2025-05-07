@@ -3,10 +3,10 @@ import {mongoose} from 'mongoose';
 
 const usuarioSchema = new Schema({
     nombre: { type: String, required: true },
-    contraseña: { type: String, required: true, minlength: [8, 'La contraseña debe tener minimo 8 caracteres'] },
+    contrasena: { type: String, required: true, minlength: [8, 'La contraseña debe tener minimo 8 caracteres'] },
     correo: { type: String, required: true, unique: true, match: [/.+\@.+\..+/, 'Por favor ingrese un correo valido'] },
     telefono: { type: String, required: true },
-    rol: { type: String, required: true, enum:['usuario', 'admind'], default: 'usuario' },
+    rol: { type: String, required: true, enum:['usuario', 'admin'], default: 'usuario' },
     direccion: { type: Schema.Types.ObjectId, ref: 'Direccion' }
 });
 
@@ -27,8 +27,7 @@ const ciudadSchema = new Schema({
 });
 
 const regionSchema = new Schema({
-    nombre: { type: String, required: true },
-    pais: { type: String, required: true }
+    nombre: { type: String, required: true }
 });
 
 const pedidoSchema = new Schema({

@@ -35,7 +35,8 @@ const typeDefs = gql`
         id: ID!
         calle: String!
         numero: String!
-        comuna: ID!
+        comunaId: ID!
+        comunaData: Comuna
     }
     
     input DireccionInput {
@@ -49,7 +50,8 @@ const typeDefs = gql`
     type Comuna {
         id: ID!
         nombre: String!
-        ciudad: Ciudad
+        ciudadId: ID!
+        ciudadData: Ciudad
     }
     
     input ComunaInput {
@@ -62,7 +64,8 @@ const typeDefs = gql`
     type Ciudad {
         id: ID!
         nombre: String!
-        region: Region
+        regionId: ID!
+        regionData: Region
     }
     
     input CiudadInput {

@@ -34,19 +34,45 @@ const resolvers = {
         // Queries para Usuario
         async getUsuarios (obj){
             try {
-                const uruarios = await Usuario.find().populate({
-                    path: 'direccion',
-                    populate: {
-                        path: 'comuna',
-                        populate: {
-                            path: 'ciudad',
+                const usuarios = await Usuario.find()
+                    .populate({
+                        path: 'direccion',
+                        populate: [{
+                            path: 'comuna',
+                            model: 'Comuna',
                             populate: {
-                                path: 'region',
-                            },
-                        },
-                    },
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                populate: {
+                                    path: 'region',
+                                    model: 'Region'
+                                }
+                            }
+                        }]
+                    });
+
+                // Transformar el resultado para asegurar que los IDs se manejen correctamente
+                const usuariosFormateados = usuarios.map(usuario => {
+                    const usuarioObj = usuario.toObject();
+                    if (usuarioObj.direccion) {
+                        if (usuarioObj.direccion.comuna) {
+                            usuarioObj.direccion.comunaId = usuarioObj.direccion.comuna._id;
+                            usuarioObj.direccion.comunaData = {
+                                ...usuarioObj.direccion.comuna,
+                                ciudadId: usuarioObj.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...usuarioObj.direccion.comuna.ciudad,
+                                    regionId: usuarioObj.direccion.comuna.ciudad.region._id,
+                                    regionData: usuarioObj.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete usuarioObj.direccion.comuna;
+                        }
+                    }
+                    return usuarioObj;
                 });
-                return uruarios;
+
+                return usuariosFormateados;
             } catch (error) {
                 console.error('Error al obtener los usuarios:', error);
                 throw error;
@@ -74,109 +100,287 @@ const resolvers = {
         },
         async getUsuariosByNombre (obj, { nombre }){
             try {
-                const usuario = await Usuario.find({ nombre }).populate({
-                    path: 'direccion',
-                    populate: {
-                        path: 'comuna',
-                        populate: {
-                            path: 'ciudad',
+                const usuarios = await Usuario.find({ nombre })
+                    .populate({
+                        path: 'direccion',
+                        populate: [{
+                            path: 'comuna',
+                            model: 'Comuna',
                             populate: {
-                                path: 'region',
-                            },
-                        },
-                    },
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                populate: {
+                                    path: 'region',
+                                    model: 'Region'
+                                }
+                            }
+                        }]
+                    });
+
+                const usuariosFormateados = usuarios.map(usuario => {
+                    const usuarioObj = usuario.toObject();
+                    if (usuarioObj.direccion) {
+                        if (usuarioObj.direccion.comuna) {
+                            usuarioObj.direccion.comunaId = usuarioObj.direccion.comuna._id;
+                            usuarioObj.direccion.comunaData = {
+                                ...usuarioObj.direccion.comuna,
+                                ciudadId: usuarioObj.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...usuarioObj.direccion.comuna.ciudad,
+                                    regionId: usuarioObj.direccion.comuna.ciudad.region._id,
+                                    regionData: usuarioObj.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete usuarioObj.direccion.comuna;
+                        }
+                    }
+                    return usuarioObj;
                 });
-                return usuario;
+
+                return usuariosFormateados;
             } catch (error) {
-                console.error('Error al obtener el usuario por nombre:', error);
+                console.error('Error al obtener los usuarios por nombre:', error);
                 throw error;
             }
         },
         async getUsuariosByRol (obj, { rol }){
             try {
-                const usuario = await Usuario.find({ rol }).populate({
-                    path: 'direccion',
-                    populate: {
-                        path: 'comuna',
-                        populate: {
-                            path: 'ciudad',
+                const usuarios = await Usuario.find({ rol })
+                    .populate({
+                        path: 'direccion',
+                        populate: [{
+                            path: 'comuna',
+                            model: 'Comuna',
                             populate: {
-                                path: 'region',
-                            },
-                        },
-                    },
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                populate: {
+                                    path: 'region',
+                                    model: 'Region'
+                                }
+                            }
+                        }]
+                    });
+
+                const usuariosFormateados = usuarios.map(usuario => {
+                    const usuarioObj = usuario.toObject();
+                    if (usuarioObj.direccion) {
+                        if (usuarioObj.direccion.comuna) {
+                            usuarioObj.direccion.comunaId = usuarioObj.direccion.comuna._id;
+                            usuarioObj.direccion.comunaData = {
+                                ...usuarioObj.direccion.comuna,
+                                ciudadId: usuarioObj.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...usuarioObj.direccion.comuna.ciudad,
+                                    regionId: usuarioObj.direccion.comuna.ciudad.region._id,
+                                    regionData: usuarioObj.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete usuarioObj.direccion.comuna;
+                        }
+                    }
+                    return usuarioObj;
                 });
-                return usuario;
+
+                return usuariosFormateados;
             } catch (error) {
-                console.error('Error al obtener el usuario por rol:', error);
+                console.error('Error al obtener los usuarios por rol:', error);
                 throw error;
             }
         },
         async getUsuariosByComuna (obj, { comuna }){
             try {
-                const usuario = await Usuario.find({ 'direccion.comuna': comuna }).populate({
-                    path: 'direccion',
-                    populate: {
-                        path: 'comuna',
-                        populate: {
-                            path: 'ciudad',
+                const usuarios = await Usuario.find()
+                    .populate({
+                        path: 'direccion',
+                        populate: [{
+                            path: 'comuna',
+                            model: 'Comuna',
+                            match: { nombre: comuna },
                             populate: {
-                                path: 'region',
-                            },
-                        },
-                    },
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                populate: {
+                                    path: 'region',
+                                    model: 'Region'
+                                }
+                            }
+                        }]
+                    });
+
+                const usuariosFiltrados = usuarios.filter(usuario => 
+                    usuario.direccion && 
+                    usuario.direccion.comuna && 
+                    usuario.direccion.comuna.nombre === comuna
+                );
+
+                const usuariosFormateados = usuariosFiltrados.map(usuario => {
+                    const usuarioObj = usuario.toObject();
+                    if (usuarioObj.direccion) {
+                        if (usuarioObj.direccion.comuna) {
+                            usuarioObj.direccion.comunaId = usuarioObj.direccion.comuna._id;
+                            usuarioObj.direccion.comunaData = {
+                                ...usuarioObj.direccion.comuna,
+                                ciudadId: usuarioObj.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...usuarioObj.direccion.comuna.ciudad,
+                                    regionId: usuarioObj.direccion.comuna.ciudad.region._id,
+                                    regionData: usuarioObj.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete usuarioObj.direccion.comuna;
+                        }
+                    }
+                    return usuarioObj;
                 });
-                return usuario;
+
+                return usuariosFormateados;
             } catch (error) {
-                console.error('Error al obtener el usuario por comuna:', error);
+                console.error('Error al obtener los usuarios por comuna:', error);
                 throw error;
             }
         },
         async getUsuariosByCiudad (obj, { ciudad }){
             try {
-                const usuario = await Usuario.find({ 'direccion.comuna.ciudad': ciudad }).populate({
-                    path: 'direccion',
-                    populate: {
-                        path: 'comuna',
-                        populate: {
-                            path: 'ciudad',
+                const usuarios = await Usuario.find()
+                    .populate({
+                        path: 'direccion',
+                        populate: [{
+                            path: 'comuna',
+                            model: 'Comuna',
                             populate: {
-                                path: 'region',
-                            },
-                        },
-                    },
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                match: { nombre: ciudad }
+                            }
+                        }]
+                    });
+
+                // Filtrar usuarios que tienen la ciudad especificada
+                const usuariosFiltrados = usuarios.filter(usuario => 
+                    usuario.direccion && 
+                    usuario.direccion.comuna && 
+                    usuario.direccion.comuna.ciudad && 
+                    usuario.direccion.comuna.ciudad.nombre === ciudad
+                );
+
+                // Transformar el resultado para asegurar que los IDs se manejen correctamente
+                const usuariosFormateados = usuariosFiltrados.map(usuario => {
+                    const usuarioObj = usuario.toObject();
+                    if (usuarioObj.direccion) {
+                        if (usuarioObj.direccion.comuna) {
+                            usuarioObj.direccion.comunaId = usuarioObj.direccion.comuna._id;
+                            usuarioObj.direccion.comunaData = {
+                                ...usuarioObj.direccion.comuna,
+                                ciudadId: usuarioObj.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...usuarioObj.direccion.comuna.ciudad,
+                                    regionId: usuarioObj.direccion.comuna.ciudad.region._id,
+                                    regionData: usuarioObj.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete usuarioObj.direccion.comuna;
+                        }
+                    }
+                    return usuarioObj;
                 });
-                return usuario;
+
+                return usuariosFormateados;
             } catch (error) {
-                console.error('Error al obtener el usuario por ciudad:', error);
+                console.error('Error al obtener los usuarios por ciudad:', error);
                 throw error;
             }
         },
         async getUsuariosByRegion (obj, { region }){
             try {
-                const usuario = await Usuario.find({ 'direccion.comuna.ciudad.region': region }).populate({
-                    path: 'direccion',
-                    populate: {
-                        path: 'comuna',
-                        populate: {
-                            path: 'ciudad',
+                const usuarios = await Usuario.find()
+                    .populate({
+                        path: 'direccion',
+                        populate: [{
+                            path: 'comuna',
+                            model: 'Comuna',
                             populate: {
-                                path: 'region',
-                            },
-                        },
-                    },
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                populate: {
+                                    path: 'region',
+                                    model: 'Region',
+                                    match: { nombre: region }
+                                }
+                            }
+                        }]
+                    });
+
+                const usuariosFiltrados = usuarios.filter(usuario => 
+                    usuario.direccion && 
+                    usuario.direccion.comuna && 
+                    usuario.direccion.comuna.ciudad && 
+                    usuario.direccion.comuna.ciudad.region && 
+                    usuario.direccion.comuna.ciudad.region.nombre === region
+                );
+
+                const usuariosFormateados = usuariosFiltrados.map(usuario => {
+                    const usuarioObj = usuario.toObject();
+                    if (usuarioObj.direccion) {
+                        if (usuarioObj.direccion.comuna) {
+                            usuarioObj.direccion.comunaId = usuarioObj.direccion.comuna._id;
+                            usuarioObj.direccion.comunaData = {
+                                ...usuarioObj.direccion.comuna,
+                                ciudadId: usuarioObj.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...usuarioObj.direccion.comuna.ciudad,
+                                    regionId: usuarioObj.direccion.comuna.ciudad.region._id,
+                                    regionData: usuarioObj.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete usuarioObj.direccion.comuna;
+                        }
+                    }
+                    return usuarioObj;
                 });
-                return usuario;
+
+                return usuariosFormateados;
             } catch (error) {
-                console.error('Error al obtener el usuario por region:', error);
+                console.error('Error al obtener los usuarios por region:', error);
                 throw error;
             }
         },
         // Queries para DIreccion
         async getDirecciones (obj){
             try {
-                const direcciones = await Direccion.find();
-                return direcciones;
+                const direcciones = await Direccion.find()
+                    .populate({
+                        path: 'comuna',
+                        model: 'Comuna',
+                        populate: {
+                            path: 'ciudad',
+                            model: 'Ciudad',
+                            populate: {
+                                path: 'region',
+                                model: 'Region'
+                            }
+                        }
+                    });
+
+                const direccionesFormateadas = direcciones.map(direccion => {
+                    const direccionObj = direccion.toObject();
+                    if (direccionObj.comuna) {
+                        direccionObj.comunaId = direccionObj.comuna._id;
+                        direccionObj.comunaData = {
+                            ...direccionObj.comuna,
+                            ciudadId: direccionObj.comuna.ciudad._id,
+                            ciudadData: {
+                                ...direccionObj.comuna.ciudad,
+                                regionId: direccionObj.comuna.ciudad.region._id,
+                                regionData: direccionObj.comuna.ciudad.region
+                            }
+                        };
+                        delete direccionObj.comuna;
+                    }
+                    return direccionObj;
+                });
+
+                return direccionesFormateadas;
             } catch (error) {
                 console.error('Error al obtener las direcciones:', error);
                 throw error;
@@ -193,60 +397,172 @@ const resolvers = {
         },
         async getDireccionesByComuna (obj, { comuna }){
             try {
-                const direccion = await Direccion.find({'direccion.comuna': comuna}).populate({
-                    path: 'comuna',
-                    populate: {
-                        path: 'ciudad',
+                const direcciones = await Direccion.find()
+                    .populate({
+                        path: 'comuna',
+                        model: 'Comuna',
+                        match: { nombre: comuna },
                         populate: {
-                            path: 'region',
-                        },
+                            path: 'ciudad',
+                            model: 'Ciudad',
+                            populate: {
+                                path: 'region',
+                                model: 'Region'
+                            }
+                        }
+                    });
+
+                const direccionesFiltradas = direcciones.filter(direccion => 
+                    direccion.comuna && direccion.comuna.nombre === comuna
+                );
+
+                const direccionesFormateadas = direccionesFiltradas.map(direccion => {
+                    const direccionObj = direccion.toObject();
+                    if (direccionObj.comuna) {
+                        direccionObj.comunaId = direccionObj.comuna._id;
+                        direccionObj.comunaData = {
+                            ...direccionObj.comuna,
+                            ciudadId: direccionObj.comuna.ciudad._id,
+                            ciudadData: {
+                                ...direccionObj.comuna.ciudad,
+                                regionId: direccionObj.comuna.ciudad.region._id,
+                                regionData: direccionObj.comuna.ciudad.region
+                            }
+                        };
+                        delete direccionObj.comuna;
                     }
+                    return direccionObj;
                 });
-                return direccion;
+
+                return direccionesFormateadas;
             } catch (error) {
-                console.error('Error al obtener la direccion por comuna:', error);
+                console.error('Error al obtener las direcciones por comuna:', error);
                 throw error;
             }
         },
         async getDireccionesByCiudad (obj, { ciudad }){
             try {
-                const direccion = await Direccion.find({ 'comuna.ciudad.nombre': ciudad }).populate({
-                    path: 'comuna',
+                const direcciones = await Direccion.find()
+                    .populate({
+                        path: 'comuna',
+                        model: 'Comuna',
                         populate: {
                             path: 'ciudad',
+                            model: 'Ciudad',
+                            match: { nombre: ciudad },
                             populate: {
                                 path: 'region',
-                            },
-                        },
+                                model: 'Region'
+                            }
+                        }
+                    });
+
+                const direccionesFiltradas = direcciones.filter(direccion => 
+                    direccion.comuna && 
+                    direccion.comuna.ciudad && 
+                    direccion.comuna.ciudad.nombre === ciudad
+                );
+
+                const direccionesFormateadas = direccionesFiltradas.map(direccion => {
+                    const direccionObj = direccion.toObject();
+                    if (direccionObj.comuna) {
+                        direccionObj.comunaId = direccionObj.comuna._id;
+                        direccionObj.comunaData = {
+                            ...direccionObj.comuna,
+                            ciudadId: direccionObj.comuna.ciudad._id,
+                            ciudadData: {
+                                ...direccionObj.comuna.ciudad,
+                                regionId: direccionObj.comuna.ciudad.region._id,
+                                regionData: direccionObj.comuna.ciudad.region
+                            }
+                        };
+                        delete direccionObj.comuna;
+                    }
+                    return direccionObj;
                 });
-                return direccion;
+
+                return direccionesFormateadas;
             } catch (error) {
-                console.error('Error al obtener la direccion por ciudad:', error);
+                console.error('Error al obtener las direcciones por ciudad:', error);
                 throw error;
             }
         },
         async getDireccionesByRegion (obj, { region }){
             try {
-                const direccion = await Direccion.find({ 'comuna.ciudad.region.nombre': region }).populate({
-                    path: 'comuna',
+                const direcciones = await Direccion.find()
+                    .populate({
+                        path: 'comuna',
+                        model: 'Comuna',
                         populate: {
                             path: 'ciudad',
+                            model: 'Ciudad',
                             populate: {
                                 path: 'region',
-                            },
-                        },
+                                model: 'Region',
+                                match: { nombre: region }
+                            }
+                        }
+                    });
+
+                const direccionesFiltradas = direcciones.filter(direccion => 
+                    direccion.comuna && 
+                    direccion.comuna.ciudad && 
+                    direccion.comuna.ciudad.region && 
+                    direccion.comuna.ciudad.region.nombre === region
+                );
+
+                const direccionesFormateadas = direccionesFiltradas.map(direccion => {
+                    const direccionObj = direccion.toObject();
+                    if (direccionObj.comuna) {
+                        direccionObj.comunaId = direccionObj.comuna._id;
+                        direccionObj.comunaData = {
+                            ...direccionObj.comuna,
+                            ciudadId: direccionObj.comuna.ciudad._id,
+                            ciudadData: {
+                                ...direccionObj.comuna.ciudad,
+                                regionId: direccionObj.comuna.ciudad.region._id,
+                                regionData: direccionObj.comuna.ciudad.region
+                            }
+                        };
+                        delete direccionObj.comuna;
+                    }
+                    return direccionObj;
                 });
-                return direccion;
+
+                return direccionesFormateadas;
             } catch (error) {
-                console.error('Error al obtener la direccion por region:', error);
+                console.error('Error al obtener las direcciones por region:', error);
                 throw error;
             }
         },
         // Queries para Comuna
         async getComunas (obj){
             try {
-                const comunas = await Comuna.find();
-                return comunas;
+                const comunas = await Comuna.find()
+                    .populate({
+                        path: 'ciudad',
+                        model: 'Ciudad',
+                        populate: {
+                            path: 'region',
+                            model: 'Region'
+                        }
+                    });
+
+                const comunasFormateadas = comunas.map(comuna => {
+                    const comunaObj = comuna.toObject();
+                    if (comunaObj.ciudad) {
+                        comunaObj.ciudadId = comunaObj.ciudad._id;
+                        comunaObj.ciudadData = {
+                            ...comunaObj.ciudad,
+                            regionId: comunaObj.ciudad.region._id,
+                            regionData: comunaObj.ciudad.region
+                        };
+                        delete comunaObj.ciudad;
+                    }
+                    return comunaObj;
+                });
+
+                return comunasFormateadas;
             } catch (error) {
                 console.error('Error al obtener las comunas:', error);
                 throw error;
@@ -254,8 +570,32 @@ const resolvers = {
         },
         async getComunaById (obj, { id }){
             try {
-                const comuna = await Comuna.findById(id);
-                return comuna;
+                const comuna = await Comuna.findById(id)
+                    .populate({
+                        path: 'ciudad',
+                        model: 'Ciudad',
+                        populate: {
+                            path: 'region',
+                            model: 'Region'
+                        }
+                    });
+
+                if (!comuna) {
+                    throw new Error('Comuna no encontrada');
+                }
+
+                const comunaObj = comuna.toObject();
+                if (comunaObj.ciudad) {
+                    comunaObj.ciudadId = comunaObj.ciudad._id;
+                    comunaObj.ciudadData = {
+                        ...comunaObj.ciudad,
+                        regionId: comunaObj.ciudad.region._id,
+                        regionData: comunaObj.ciudad.region
+                    };
+                    delete comunaObj.ciudad;
+                }
+
+                return comunaObj;
             } catch (error) {
                 console.error('Error al obtener la comuna:', error);
                 throw error;
@@ -263,8 +603,31 @@ const resolvers = {
         },
         async getComuna (obj, { nombre }){
             try {
-                const comuna = await Comuna.find({ nombre });
-                return comuna;
+                const comunas = await Comuna.find({ nombre })
+                    .populate({
+                        path: 'ciudad',
+                        model: 'Ciudad',
+                        populate: {
+                            path: 'region',
+                            model: 'Region'
+                        }
+                    });
+
+                const comunasFormateadas = comunas.map(comuna => {
+                    const comunaObj = comuna.toObject();
+                    if (comunaObj.ciudad) {
+                        comunaObj.ciudadId = comunaObj.ciudad._id;
+                        comunaObj.ciudadData = {
+                            ...comunaObj.ciudad,
+                            regionId: comunaObj.ciudad.region._id,
+                            regionData: comunaObj.ciudad.region
+                        };
+                        delete comunaObj.ciudad;
+                    }
+                    return comunaObj;
+                });
+
+                return comunasFormateadas[0]; // Retornamos solo la primera comuna encontrada según el schema
             } catch (error) {
                 console.error('Error al obtener la comuna por nombre:', error);
                 throw error;
@@ -272,33 +635,100 @@ const resolvers = {
         },
         async getComunasByCiudad (obj, { ciudad }){
             try {
-                const comuna = await Comuna.find({ 'ciudad.nombre': ciudad }).populate({
-                    path: 'ciudad',
-                    populate: 'region',
+                const comunas = await Comuna.find()
+                    .populate({
+                        path: 'ciudad',
+                        model: 'Ciudad',
+                        match: { nombre: ciudad },
+                        populate: {
+                            path: 'region',
+                            model: 'Region'
+                        }
+                    });
+
+                const comunasFiltradas = comunas.filter(comuna => 
+                    comuna.ciudad && comuna.ciudad.nombre === ciudad
+                );
+
+                const comunasFormateadas = comunasFiltradas.map(comuna => {
+                    const comunaObj = comuna.toObject();
+                    if (comunaObj.ciudad) {
+                        comunaObj.ciudadId = comunaObj.ciudad._id;
+                        comunaObj.ciudadData = {
+                            ...comunaObj.ciudad,
+                            regionId: comunaObj.ciudad.region._id,
+                            regionData: comunaObj.ciudad.region
+                        };
+                        delete comunaObj.ciudad;
+                    }
+                    return comunaObj;
                 });
-                return comuna;
+
+                return comunasFormateadas;
             } catch (error) {
-                console.error('Error al obtener la comuna por ciudad:', error);
+                console.error('Error al obtener las comunas por ciudad:', error);
                 throw error;
             }
         },
         async getComunasByRegion (obj, { region }){
             try {
-                const comuna = await Comuna.find({ 'ciudad.region.nombre': region }).populate({
-                    path: 'ciudad',
-                    populate: 'region',
+                const comunas = await Comuna.find()
+                    .populate({
+                        path: 'ciudad',
+                        model: 'Ciudad',
+                        populate: {
+                            path: 'region',
+                            model: 'Region',
+                            match: { nombre: region }
+                        }
+                    });
+
+                const comunasFiltradas = comunas.filter(comuna => 
+                    comuna.ciudad && 
+                    comuna.ciudad.region && 
+                    comuna.ciudad.region.nombre === region
+                );
+
+                const comunasFormateadas = comunasFiltradas.map(comuna => {
+                    const comunaObj = comuna.toObject();
+                    if (comunaObj.ciudad) {
+                        comunaObj.ciudadId = comunaObj.ciudad._id;
+                        comunaObj.ciudadData = {
+                            ...comunaObj.ciudad,
+                            regionId: comunaObj.ciudad.region._id,
+                            regionData: comunaObj.ciudad.region
+                        };
+                        delete comunaObj.ciudad;
+                    }
+                    return comunaObj;
                 });
-                return comuna;
+
+                return comunasFormateadas;
             } catch (error) {
-                console.error('Error al obtener la comuna por region:', error);
+                console.error('Error al obtener las comunas por región:', error);
                 throw error;
             }
         },
         // Queries para Ciudad
         async getCiudades (obj){
             try {
-                const ciudades = await Ciudad.find();
-                return ciudades;
+                const ciudades = await Ciudad.find()
+                    .populate({
+                        path: 'region',
+                        model: 'Region'
+                    });
+
+                const ciudadesFormateadas = ciudades.map(ciudad => {
+                    const ciudadObj = ciudad.toObject();
+                    if (ciudadObj.region) {
+                        ciudadObj.regionId = ciudadObj.region._id;
+                        ciudadObj.regionData = ciudadObj.region;
+                        delete ciudadObj.region;
+                    }
+                    return ciudadObj;
+                });
+
+                return ciudadesFormateadas;
             } catch (error) {
                 console.error('Error al obtener las ciudades:', error);
                 throw error;
@@ -306,8 +736,24 @@ const resolvers = {
         },
         async getCiudad (obj, { id }){
             try {
-                const ciudad = await Ciudad.findById(id);
-                return ciudad;
+                const ciudad = await Ciudad.findById(id)
+                    .populate({
+                        path: 'region',
+                        model: 'Region'
+                    });
+
+                if (!ciudad) {
+                    throw new Error('Ciudad no encontrada');
+                }
+
+                const ciudadObj = ciudad.toObject();
+                if (ciudadObj.region) {
+                    ciudadObj.regionId = ciudadObj.region._id;
+                    ciudadObj.regionData = ciudadObj.region;
+                    delete ciudadObj.region;
+                }
+
+                return ciudadObj;
             } catch (error) {
                 console.error('Error al obtener la ciudad:', error);
                 throw error;
@@ -315,8 +761,24 @@ const resolvers = {
         },
         async getCiudadByNombre (obj, { nombre }){
             try {
-                const ciudad = await Ciudad.find({ nombre });
-                return ciudad;
+                const ciudades = await Ciudad.find({ nombre })
+                    .populate({
+                        path: 'region',
+                        model: 'Region'
+                    });
+
+                if (ciudades.length === 0) {
+                    return null;
+                }
+
+                const ciudadObj = ciudades[0].toObject();
+                if (ciudadObj.region) {
+                    ciudadObj.regionId = ciudadObj.region._id;
+                    ciudadObj.regionData = ciudadObj.region;
+                    delete ciudadObj.region;
+                }
+
+                return ciudadObj;
             } catch (error) {
                 console.error('Error al obtener la ciudad por nombre:', error);
                 throw error;
@@ -324,10 +786,30 @@ const resolvers = {
         },
         async getCiudadesByRegion (obj, { region }){
             try {
-                const ciudad = await Ciudad.find({ 'region.nombre': region }).populate('region');
-                return ciudad;
+                const ciudades = await Ciudad.find()
+                    .populate({
+                        path: 'region',
+                        model: 'Region',
+                        match: { nombre: region }
+                    });
+
+                const ciudadesFiltradas = ciudades.filter(ciudad => 
+                    ciudad.region && ciudad.region.nombre === region
+                );
+
+                const ciudadesFormateadas = ciudadesFiltradas.map(ciudad => {
+                    const ciudadObj = ciudad.toObject();
+                    if (ciudadObj.region) {
+                        ciudadObj.regionId = ciudadObj.region._id;
+                        ciudadObj.regionData = ciudadObj.region;
+                        delete ciudadObj.region;
+                    }
+                    return ciudadObj;
+                });
+
+                return ciudadesFormateadas;
             } catch (error) {
-                console.error('Error al obtener la ciudad por region:', error);
+                console.error('Error al obtener las ciudades por región:', error);
                 throw error;
             }
         },
@@ -344,18 +826,21 @@ const resolvers = {
         async getRegion (obj, { id }){
             try {
                 const region = await Region.findById(id);
+                if (!region) {
+                    throw new Error('Región no encontrada');
+                }
                 return region;
             } catch (error) {
-                console.error('Error al obtener la region:', error);
+                console.error('Error al obtener la región:', error);
                 throw error;
             }
         },
         async getRegionByNombre (obj, { nombre }){
             try {
-                const region = await Region.find({ nombre });
-                return region;
+                const regiones = await Region.find({ nombre });
+                return regiones[0]; // Retornamos solo la primera región encontrada según el schema
             } catch (error) {
-                console.error('Error al obtener la region por nombre:', error);
+                console.error('Error al obtener la región por nombre:', error);
                 throw error;
             }
         },
@@ -365,29 +850,59 @@ const resolvers = {
                 const pedidos = await Pedido.find()
                     .populate({
                         path: 'usuario',
-                        select: 'nombre correo', // Solo campos necesarios
+                        model: 'Usuario',
+                        select: 'nombre correo telefono',
                         populate: {
                             path: 'direccion',
-                            select: 'calle numero',
+                            model: 'Direccion',
                             populate: {
                                 path: 'comuna',
-                                select: 'nombre',
+                                model: 'Comuna',
                                 populate: {
                                     path: 'ciudad',
-                                    select: 'nombre',
+                                    model: 'Ciudad',
                                     populate: {
                                         path: 'region',
-                                        select: 'nombre',
-                                    },
-                                },
-                            },
-                        },
+                                        model: 'Region'
+                                    }
+                                }
+                            }
+                        }
                     })
                     .populate({
                         path: 'articulo',
-                        select: 'nombre precio', // Solo campos relevantes
+                        model: 'Articulo',
+                        select: 'nombre precio etiqueta',
+                        populate: {
+                            path: 'imagenes',
+                            model: 'Imagenes'
+                        }
                     });
-                return pedidos;
+
+                const pedidosFormateados = pedidos.map(pedido => {
+                    const pedidoObj = pedido.toObject();
+                    
+                    // Formatear datos del usuario
+                    if (pedidoObj.usuario && pedidoObj.usuario.direccion) {
+                        if (pedidoObj.usuario.direccion.comuna) {
+                            pedidoObj.usuario.direccion.comunaId = pedidoObj.usuario.direccion.comuna._id;
+                            pedidoObj.usuario.direccion.comunaData = {
+                                ...pedidoObj.usuario.direccion.comuna,
+                                ciudadId: pedidoObj.usuario.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...pedidoObj.usuario.direccion.comuna.ciudad,
+                                    regionId: pedidoObj.usuario.direccion.comuna.ciudad.region._id,
+                                    regionData: pedidoObj.usuario.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete pedidoObj.usuario.direccion.comuna;
+                        }
+                    }
+
+                    return pedidoObj;
+                });
+
+                return pedidosFormateados;
             } catch (error) {
                 console.error('Error al obtener los pedidos:', error);
                 throw error;
@@ -395,8 +910,62 @@ const resolvers = {
         },
         async getPedido (obj, { id }){
             try {
-                const pedido = await Pedido.findById(id);
-                return pedido;
+                const pedido = await Pedido.findById(id)
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono',
+                        populate: {
+                            path: 'direccion',
+                            model: 'Direccion',
+                            populate: {
+                                path: 'comuna',
+                                model: 'Comuna',
+                                populate: {
+                                    path: 'ciudad',
+                                    model: 'Ciudad',
+                                    populate: {
+                                        path: 'region',
+                                        model: 'Region'
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .populate({
+                        path: 'articulo',
+                        model: 'Articulo',
+                        select: 'nombre precio etiqueta',
+                        populate: {
+                            path: 'imagenes',
+                            model: 'Imagenes'
+                        }
+                    });
+
+                if (!pedido) {
+                    throw new Error('Pedido no encontrado');
+                }
+
+                const pedidoObj = pedido.toObject();
+                
+                // Formatear datos del usuario
+                if (pedidoObj.usuario && pedidoObj.usuario.direccion) {
+                    if (pedidoObj.usuario.direccion.comuna) {
+                        pedidoObj.usuario.direccion.comunaId = pedidoObj.usuario.direccion.comuna._id;
+                        pedidoObj.usuario.direccion.comunaData = {
+                            ...pedidoObj.usuario.direccion.comuna,
+                            ciudadId: pedidoObj.usuario.direccion.comuna.ciudad._id,
+                            ciudadData: {
+                                ...pedidoObj.usuario.direccion.comuna.ciudad,
+                                regionId: pedidoObj.usuario.direccion.comuna.ciudad.region._id,
+                                regionData: pedidoObj.usuario.direccion.comuna.ciudad.region
+                            }
+                        };
+                        delete pedidoObj.usuario.direccion.comuna;
+                    }
+                }
+
+                return pedidoObj;
             } catch (error) {
                 console.error('Error al obtener el pedido:', error);
                 throw error;
@@ -404,120 +973,266 @@ const resolvers = {
         },
         async getPedidosByUsuario (obj, { usuario }){
             try {
-                const pedido = await Pedido.find({ usuario }).populate({
-                    path : 'usuario',
-                    select: 'nombre correo',
-                })
-                .populate({
-                    path: 'articulo',
-                    select: 'nombre precio',
+                const pedidos = await Pedido.find({ usuario })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono',
+                        populate: {
+                            path: 'direccion',
+                            model: 'Direccion',
+                            populate: {
+                                path: 'comuna',
+                                model: 'Comuna',
+                                populate: {
+                                    path: 'ciudad',
+                                    model: 'Ciudad',
+                                    populate: {
+                                        path: 'region',
+                                        model: 'Region'
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .populate({
+                        path: 'articulo',
+                        model: 'Articulo',
+                        select: 'nombre precio etiqueta',
+                        populate: {
+                            path: 'imagenes',
+                            model: 'Imagenes'
+                        }
+                    });
+
+                const pedidosFormateados = pedidos.map(pedido => {
+                    const pedidoObj = pedido.toObject();
+                    
+                    // Formatear datos del usuario
+                    if (pedidoObj.usuario && pedidoObj.usuario.direccion) {
+                        if (pedidoObj.usuario.direccion.comuna) {
+                            pedidoObj.usuario.direccion.comunaId = pedidoObj.usuario.direccion.comuna._id;
+                            pedidoObj.usuario.direccion.comunaData = {
+                                ...pedidoObj.usuario.direccion.comuna,
+                                ciudadId: pedidoObj.usuario.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...pedidoObj.usuario.direccion.comuna.ciudad,
+                                    regionId: pedidoObj.usuario.direccion.comuna.ciudad.region._id,
+                                    regionData: pedidoObj.usuario.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete pedidoObj.usuario.direccion.comuna;
+                        }
+                    }
+
+                    return pedidoObj;
                 });
-                return pedido;
+
+                return pedidosFormateados;
             } catch (error) {
-                console.error('Error al obtener el pedido por usuario:', error);
+                console.error('Error al obtener los pedidos por usuario:', error);
                 throw error;
             }
         },
         async getPedidosByArticulo (obj, { articulo }){
             try {
-                const pedido = await Pedido.find({ articulo }).populate({
-                    path: 'articulo',
-                    select: 'nombre precio',
-                })
-                .populate({
-                    path: 'usuario',
-                    select: 'nombre correo',
-                    populate: {
-                        path: 'direccion',
-                        select: 'calle numero',
+                const pedidos = await Pedido.find({ articulo })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono',
                         populate: {
-                            path: 'comuna',
-                            select: 'nombre',
+                            path: 'direccion',
+                            model: 'Direccion',
                             populate: {
-                                path: 'ciudad',
-                                select: 'nombre',
+                                path: 'comuna',
+                                model: 'Comuna',
                                 populate: {
-                                    path: 'region',
-                                    select: 'nombre',
-                                },
-                            },
-                        },
-                    },
+                                    path: 'ciudad',
+                                    model: 'Ciudad',
+                                    populate: {
+                                        path: 'region',
+                                        model: 'Region'
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .populate({
+                        path: 'articulo',
+                        model: 'Articulo',
+                        select: 'nombre precio etiqueta',
+                        populate: {
+                            path: 'imagenes',
+                            model: 'Imagenes'
+                        }
+                    });
+
+                const pedidosFormateados = pedidos.map(pedido => {
+                    const pedidoObj = pedido.toObject();
+                    
+                    // Formatear datos del usuario
+                    if (pedidoObj.usuario && pedidoObj.usuario.direccion) {
+                        if (pedidoObj.usuario.direccion.comuna) {
+                            pedidoObj.usuario.direccion.comunaId = pedidoObj.usuario.direccion.comuna._id;
+                            pedidoObj.usuario.direccion.comunaData = {
+                                ...pedidoObj.usuario.direccion.comuna,
+                                ciudadId: pedidoObj.usuario.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...pedidoObj.usuario.direccion.comuna.ciudad,
+                                    regionId: pedidoObj.usuario.direccion.comuna.ciudad.region._id,
+                                    regionData: pedidoObj.usuario.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete pedidoObj.usuario.direccion.comuna;
+                        }
+                    }
+
+                    return pedidoObj;
                 });
-                return pedido;
+
+                return pedidosFormateados;
             } catch (error) {
-                console.error('Error al obtener el pedido por articulo:', error);
+                console.error('Error al obtener los pedidos por artículo:', error);
                 throw error;
             }
         },
         async getPedidosByEstado (obj, { estado }){
             try {
-                const pedido = await Pedido.find({ estado }).populate({
-                    path: 'articulo',
-                    select: 'nombre precio',
-                })
-                .populate({
-                    path: 'usuario',
-                    select: 'nombre correo',
-                    populate: {
-                        path: 'direccion',
-                        select: 'calle numero',
+                const pedidos = await Pedido.find({ estado })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono',
                         populate: {
-                            path: 'comuna',
-                            select: 'nombre',
+                            path: 'direccion',
+                            model: 'Direccion',
                             populate: {
-                                path: 'ciudad',
-                                select: 'nombre',
+                                path: 'comuna',
+                                model: 'Comuna',
                                 populate: {
-                                    path: 'region',
-                                    select: 'nombre',
-                                },
-                            },
-                        },
-                    },
+                                    path: 'ciudad',
+                                    model: 'Ciudad',
+                                    populate: {
+                                        path: 'region',
+                                        model: 'Region'
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .populate({
+                        path: 'articulo',
+                        model: 'Articulo',
+                        select: 'nombre precio etiqueta',
+                        populate: {
+                            path: 'imagenes',
+                            model: 'Imagenes'
+                        }
+                    });
+
+                const pedidosFormateados = pedidos.map(pedido => {
+                    const pedidoObj = pedido.toObject();
+                    
+                    // Formatear datos del usuario
+                    if (pedidoObj.usuario && pedidoObj.usuario.direccion) {
+                        if (pedidoObj.usuario.direccion.comuna) {
+                            pedidoObj.usuario.direccion.comunaId = pedidoObj.usuario.direccion.comuna._id;
+                            pedidoObj.usuario.direccion.comunaData = {
+                                ...pedidoObj.usuario.direccion.comuna,
+                                ciudadId: pedidoObj.usuario.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...pedidoObj.usuario.direccion.comuna.ciudad,
+                                    regionId: pedidoObj.usuario.direccion.comuna.ciudad.region._id,
+                                    regionData: pedidoObj.usuario.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete pedidoObj.usuario.direccion.comuna;
+                        }
+                    }
+
+                    return pedidoObj;
                 });
-                return pedido;
+
+                return pedidosFormateados;
             } catch (error) {
-                console.error('Error al obtener el pedido por estado:', error);
+                console.error('Error al obtener los pedidos por estado:', error);
                 throw error;
             }
         },
         async getPedidosByFecha (obj, { fecha }){
             try {
-                const pedido = await Pedido.find({ fecha }).populate({
-                    path: 'articulo',
-                    select: 'nombre precio',
-                })
-                .populate({
-                    path: 'usuario',
-                    select: 'nombre correo',
-                    populate: {
-                        path: 'direccion',
-                        select: 'calle numero',
+                const pedidos = await Pedido.find({ fecha })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono',
                         populate: {
-                            path: 'comuna',
-                            select: 'nombre',
+                            path: 'direccion',
+                            model: 'Direccion',
                             populate: {
-                                path: 'ciudad',
-                                select: 'nombre',
+                                path: 'comuna',
+                                model: 'Comuna',
                                 populate: {
-                                    path: 'region',
-                                    select: 'nombre',
-                                },
-                            },
-                        },
-                    },
+                                    path: 'ciudad',
+                                    model: 'Ciudad',
+                                    populate: {
+                                        path: 'region',
+                                        model: 'Region'
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .populate({
+                        path: 'articulo',
+                        model: 'Articulo',
+                        select: 'nombre precio etiqueta',
+                        populate: {
+                            path: 'imagenes',
+                            model: 'Imagenes'
+                        }
+                    });
+
+                const pedidosFormateados = pedidos.map(pedido => {
+                    const pedidoObj = pedido.toObject();
+                    
+                    // Formatear datos del usuario
+                    if (pedidoObj.usuario && pedidoObj.usuario.direccion) {
+                        if (pedidoObj.usuario.direccion.comuna) {
+                            pedidoObj.usuario.direccion.comunaId = pedidoObj.usuario.direccion.comuna._id;
+                            pedidoObj.usuario.direccion.comunaData = {
+                                ...pedidoObj.usuario.direccion.comuna,
+                                ciudadId: pedidoObj.usuario.direccion.comuna.ciudad._id,
+                                ciudadData: {
+                                    ...pedidoObj.usuario.direccion.comuna.ciudad,
+                                    regionId: pedidoObj.usuario.direccion.comuna.ciudad.region._id,
+                                    regionData: pedidoObj.usuario.direccion.comuna.ciudad.region
+                                }
+                            };
+                            delete pedidoObj.usuario.direccion.comuna;
+                        }
+                    }
+
+                    return pedidoObj;
                 });
-                return pedido;
+
+                return pedidosFormateados;
             } catch (error) {
-                console.error('Error al obtener el pedido por fecha:', error);
+                console.error('Error al obtener los pedidos por fecha:', error);
                 throw error;
             }
         },
         // Queries para Evaluacion
         async getEvaluaciones (obj){
             try {
-                const evaluaciones = await Evaluacion.find().populate('usuario');
+                const evaluaciones = await Evaluacion.find()
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
                 return evaluaciones;
             } catch (error) {
                 console.error('Error al obtener las evaluaciones:', error);
@@ -526,7 +1241,17 @@ const resolvers = {
         },
         async getEvaluacion (obj, { id }){
             try {
-                const evaluacion = await Evaluacion.findById(id);
+                const evaluacion = await Evaluacion.findById(id)
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
+                if (!evaluacion) {
+                    throw new Error('Evaluación no encontrada');
+                }
+
                 return evaluacion;
             } catch (error) {
                 console.error('Error al obtener la evaluacion:', error);
@@ -535,20 +1260,29 @@ const resolvers = {
         },
         async getEvaluacionByUsuario (obj, { usuario }){
             try {
-                const evaluacion = await Evaluacion.find({ usuario }).populate('usuario');
-                return evaluacion;
+                const evaluaciones = await Evaluacion.find({ usuario })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
+                return evaluaciones;
             } catch (error) {
-                console.error('Error al obtener la evaluacion por usuario:', error);
+                console.error('Error al obtener las evaluaciones por usuario:', error);
                 throw error;
             }
         },
         // Queries para Comentarios
         async getComentarios (obj){
             try {
-                const comentarios = await Comentarios.find().populate({
-                    path: 'usuario',
-                    select: 'nombre correo',
-                });
+                const comentarios = await Comentarios.find()
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
                 return comentarios;
             } catch (error) {
                 console.error('Error al obtener los comentarios:', error);
@@ -557,7 +1291,17 @@ const resolvers = {
         },
         async getComentario (obj, { id }){
             try {
-                const comentario = await Comentarios.findById(id);
+                const comentario = await Comentarios.findById(id)
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
+                if (!comentario) {
+                    throw new Error('Comentario no encontrado');
+                }
+
                 return comentario;
             } catch (error) {
                 console.error('Error al obtener el comentario:', error);
@@ -566,92 +1310,140 @@ const resolvers = {
         },
         async getComentariosByUsuario (obj, { usuario }){
             try {
-                const comentario = await Comentarios.find({ usuario }).populate({path: 'usuario', select: 'nombre correo'});
-                return comentario;
+                const comentarios = await Comentarios.find({ usuario })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
+                return comentarios;
             } catch (error) {
-                console.error('Error al obtener el comentario por usuario:', error);
+                console.error('Error al obtener los comentarios por usuario:', error);
                 throw error;
             }
-        }, 
+        },
         async getComentariosByEstado (obj, { estado }){
             try {
-                const comentario = await Comentarios.find({ estado }).populate({path: 'usuario', select: 'nombre correo'});
-                return comentario;
+                const comentarios = await Comentarios.find({ estado })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
+                return comentarios;
             } catch (error) {
-                console.error('Error al obtener el comentario por estado:', error);
+                console.error('Error al obtener los comentarios por estado:', error);
                 throw error;
             }
         },
         async getComentariosByEtiqueta (obj, { etiqueta }){
             try {
-                const comentario = await Comentarios.find({ etiqueta }).populate({path: 'usuario', select: 'nombre correo'});
-                return comentario;
+                const comentarios = await Comentarios.find({ etiqueta })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
+                return comentarios;
             } catch (error) {
-                console.error('Error al obtener el comentario por etiqueta:', error);
+                console.error('Error al obtener los comentarios por etiqueta:', error);
                 throw error;
             }
         },
         async getComentariosByFecha (obj, { fecha }){
             try {
-                const comentario = await Comentarios.find({ fecha }).populate({path: 'usuario', select: 'nombre correo'});
-                return comentario;
+                const comentarios = await Comentarios.find({ fecha })
+                    .populate({
+                        path: 'usuario',
+                        model: 'Usuario',
+                        select: 'nombre correo telefono'
+                    });
+
+                return comentarios;
             } catch (error) {
-                console.error('Error al obtener el comentario por fecha:', error);
-                throw error;
-            }
-        },
-        async getComentariosByEtiqueta (obj, { etiqueta }){
-            try {
-                const comentario = await Comentarios.find({ etiqueta }).populate({path: 'usuario', select: 'nombre correo'});
-                return comentario;
-            } catch (error) {
-                console.error('Error al obtener el comentario por etiqueta:', error);
+                console.error('Error al obtener los comentarios por fecha:', error);
                 throw error;
             }
         },
         // Queries para Articulo
         async getArticulos (obj){
             try {
-                const articulos = await Articulo.find().populate('imagenes');
+                const articulos = await Articulo.find()
+                    .populate({
+                        path: 'imagenes',
+                        model: 'Imagenes'
+                    });
+
                 return articulos;
             } catch (error) {
-                console.error('Error al obtener los articulos:', error);
+                console.error('Error al obtener los artículos:', error);
                 throw error;
             }
         },
         async getArticulo (obj, { id }){
             try {
-                const articulo = await Articulo.findById(id).populate('imagenes');
+                const articulo = await Articulo.findById(id)
+                    .populate({
+                        path: 'imagenes',
+                        model: 'Imagenes'
+                    });
+
+                if (!articulo) {
+                    throw new Error('Artículo no encontrado');
+                }
+
                 return articulo;
             } catch (error) {
-                console.error('Error al obtener el articulo:', error);
+                console.error('Error al obtener el artículo:', error);
                 throw error;
             }
         },
         async getArticuloByNombre (obj, { nombre }){
             try {
-                const articulo = await Articulo.find({ nombre }).populate('imagenes');
-                return articulo;
+                const articulos = await Articulo.find({ nombre })
+                    .populate({
+                        path: 'imagenes',
+                        model: 'Imagenes'
+                    });
+
+                if (articulos.length === 0) {
+                    return null;
+                }
+
+                return articulos[0];
             } catch (error) {
-                console.error('Error al obtener el articulo por nombre:', error);
+                console.error('Error al obtener el artículo por nombre:', error);
                 throw error;
             }
         },
         async getArticulosByPrecio (obj, { precio }){
             try {
-                const articulo = await Articulo.find({ precio }).populate('imagenes');
-                return articulo;
+                const articulos = await Articulo.find({ precio })
+                    .populate({
+                        path: 'imagenes',
+                        model: 'Imagenes'
+                    });
+
+                return articulos;
             } catch (error) {
-                console.error('Error al obtener el articulo por precio:', error);
+                console.error('Error al obtener los artículos por precio:', error);
                 throw error;
             }
         },
         async getArticulosByEtiqueta (obj, { etiqueta }){
             try {
-                const articulo = await Articulo.find({ etiqueta }).populate('imagenes');
-                return articulo;
+                const articulos = await Articulo.find({ etiqueta })
+                    .populate({
+                        path: 'imagenes',
+                        model: 'Imagenes'
+                    });
+
+                return articulos;
             } catch (error) {
-                console.error('Error al obtener el articulo por etiqueta:', error);
+                console.error('Error al obtener los artículos por etiqueta:', error);
                 throw error;
             }
         },
@@ -661,13 +1453,16 @@ const resolvers = {
                 const imagenes = await Imagenes.find();
                 return imagenes;
             } catch (error) {
-                console.error('Error al obtener las imagenes:', error);
+                console.error('Error al obtener las imágenes:', error);
                 throw error;
             }
         },
         async getImagen (obj, { id }){
             try {
                 const imagen = await Imagenes.findById(id);
+                if (!imagen) {
+                    throw new Error('Imagen no encontrada');
+                }
                 return imagen;
             } catch (error) {
                 console.error('Error al obtener la imagen:', error);
@@ -676,8 +1471,11 @@ const resolvers = {
         },
         async getImagenByNombre (obj, { nombre }){
             try {
-                const imagen = await Imagenes.find({ nombre });
-                return imagen;
+                const imagenes = await Imagenes.find({ nombre });
+                if (imagenes.length === 0) {
+                    return null;
+                }
+                return imagenes[0];
             } catch (error) {
                 console.error('Error al obtener la imagen por nombre:', error);
                 throw error;
@@ -686,40 +1484,128 @@ const resolvers = {
         // Queries para InformacionPagina
         async getInformacionPagina (obj, { id }){
             try {
-                const informacionPagina = await InformacionPagina.findById(id);
+                const informacionPagina = await InformacionPagina.findById(id)
+                    .populate({
+                        path: 'imagenes',
+                        model: 'Imagenes'
+                    })
+                    .populate({
+                        path: 'contacto',
+                        model: 'Contacto'
+                    });
+
+                if (!informacionPagina) {
+                    throw new Error('Información de página no encontrada');
+                }
+
                 return informacionPagina;
             } catch (error) {
-                console.error('Error al obtener la informacion de la pagina:', error);
+                console.error('Error al obtener la información de la página:', error);
                 throw error;
             }
         },
         // Queries para Contacto
         async getContactos (obj){
             try {
-                const contactos = await Contacto.find();
-                return contactos;
+                const contactos = await Contacto.find()
+                    .populate({
+                        path: 'direccion',
+                        model: 'Direccion',
+                        populate: {
+                            path: 'comuna',
+                            model: 'Comuna',
+                            populate: {
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                populate: {
+                                    path: 'region',
+                                    model: 'Region'
+                                }
+                            }
+                        }
+                    });
+
+                const contactosFormateados = contactos.map(contacto => {
+                    const contactoObj = contacto.toObject();
+                    if (contactoObj.direccion && contactoObj.direccion.comuna) {
+                        contactoObj.direccion.comunaId = contactoObj.direccion.comuna._id;
+                        contactoObj.direccion.comunaData = {
+                            ...contactoObj.direccion.comuna,
+                            ciudadId: contactoObj.direccion.comuna.ciudad._id,
+                            ciudadData: {
+                                ...contactoObj.direccion.comuna.ciudad,
+                                regionId: contactoObj.direccion.comuna.ciudad.region._id,
+                                regionData: contactoObj.direccion.comuna.ciudad.region
+                            }
+                        };
+                        delete contactoObj.direccion.comuna;
+                    }
+                    return contactoObj;
+                });
+
+                return contactosFormateados;
             } catch (error) {
                 console.error('Error al obtener los contactos:', error);
                 throw error;
             }
         },
         async getContacto (obj, { id }){
-            const contacto = await Contacto.findById(id);
-            if (!contacto) {
-                throw new Error('Contacto no encontrado');
+            try {
+                const contacto = await Contacto.findById(id)
+                    .populate({
+                        path: 'direccion',
+                        model: 'Direccion',
+                        populate: {
+                            path: 'comuna',
+                            model: 'Comuna',
+                            populate: {
+                                path: 'ciudad',
+                                model: 'Ciudad',
+                                populate: {
+                                    path: 'region',
+                                    model: 'Region'
+                                }
+                            }
+                        }
+                    });
+
+                if (!contacto) {
+                    throw new Error('Contacto no encontrado');
+                }
+
+                const contactoObj = contacto.toObject();
+                if (contactoObj.direccion && contactoObj.direccion.comuna) {
+                    contactoObj.direccion.comunaId = contactoObj.direccion.comuna._id;
+                    contactoObj.direccion.comunaData = {
+                        ...contactoObj.direccion.comuna,
+                        ciudadId: contactoObj.direccion.comuna.ciudad._id,
+                        ciudadData: {
+                            ...contactoObj.direccion.comuna.ciudad,
+                            regionId: contactoObj.direccion.comuna.ciudad.region._id,
+                            regionData: contactoObj.direccion.comuna.ciudad.region
+                        }
+                    };
+                    delete contactoObj.direccion.comuna;
+                }
+
+                return contactoObj;
+            } catch (error) {
+                console.error('Error al obtener el contacto:', error);
+                throw error;
             }
         }
     },
     Mutation: {
         // Mutations para Usuario
-        async addUsuario (obj, { nombre, correo, contrasena, rol, direccion }){
+        async addUsuario (obj, { input }){
             try {
+                const { nombre, correo, contrasena, rol, direccion, telefono } = input;
                 const usuarioExistente = await Usuario.findOne({ correo });
                 if (usuarioExistente) {
-                    throw new AutenticationError('El correo ya está en uso');
+                    throw new AuthenticationError('El correo ya está en uso');
                 }
-                const usuario = new Usuario({ nombre, correo, contrasena, rol, direccion });
-                if (nombre === '' || correo === '' || contrasena === '' || rol === '') {
+                const usuario = new Usuario({ nombre, correo, contrasena, rol, direccion, telefono });
+                if (nombre === '' || correo === '' || contrasena === '' || rol === '' || direccion === '' || telefono === '') {
                     throw new Error('Todos los campos son obligatorios');
                 }
                 await usuario.save();
@@ -729,8 +1615,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async updateUsuario (obj, { id, nombre, correo, contrasena, rol, direccion }){
+        async updateUsuario (obj, { input }){
             try {
+                const { id, nombre, correo, contrasena, rol, direccion } = input;
                 const usuario = await Usuario.findById(id);
                 if (!usuario) {
                     throw new Error('Usuario no encontrado');
@@ -747,8 +1634,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async deleteUsuario (obj, { id }){
+        async deleteUsuario (obj, { input }){
             try {
+                const { id } = input;
                 const usuario = await Usuario.findByIdAndDelete(id);
                 if (!usuario) {
                     throw new Error('Usuario no encontrado');
@@ -760,8 +1648,9 @@ const resolvers = {
             }
         },
         // Mutations para Direccion
-        async addDireccion (obj, { calle, numero, comuna }){
+        async addDireccion (obj, { input }){
             try {
+                const { calle, numero, comuna } = input;
                 const direccion = new Direccion({ calle, numero, comuna });
                 if (calle === '' || numero === '' || comuna === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -773,8 +1662,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async updateDireccion (obj, { id, calle, numero, comuna }){
+        async updateDireccion (obj, { input }){
             try {
+                const { id, calle, numero, comuna } = input;
                 const direccion = await Direccion.findById(id);
                 if (!direccion) {
                     throw new Error('Direccion no encontrada');
@@ -789,8 +1679,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async deleteDireccion (obj, { id }){
+        async deleteDireccion (obj, { input }){
             try {
+                const { id } = input;
                 const direccion = await Direccion.findByIdAndDelete(id);
                 if (!direccion) {
                     throw new Error('Direccion no encontrada');
@@ -802,8 +1693,9 @@ const resolvers = {
             }
         },
         // Mutations para Comuna
-        async addComuna (obj, { nombre, ciudad }){
+        async addComuna (obj, { input }){
             try {
+                const { nombre, ciudad } = input;
                 const comuna = new Comuna({ nombre, ciudad });
                 if (nombre === '' || ciudad === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -843,8 +1735,9 @@ const resolvers = {
             }
         },
         // Mutations para Ciudad
-        async addCiudad (obj, { nombre, region }){
+        async addCiudad (obj, { input }){
             try {
+                const { nombre, region } = input;
                 const ciudad = new Ciudad({ nombre, region });
                 if (nombre === '' || region === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -884,8 +1777,9 @@ const resolvers = {
             }
         },
         // Mutations para Region
-        async addRegion (obj, { nombre }){
+        async addRegion (obj, { input }){
             try {
+                const { nombre } = input;
                 const region = new Region({ nombre });
                 if (nombre === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -924,8 +1818,9 @@ const resolvers = {
             }
         },
         // Mutations para Pedido
-        async addPedido (obj, { fecha, total, estado, usuario, direccion }){
+        async addPedido (obj, { input }){
             try {
+                const { fecha, total, estado, usuario, direccion } = input;
                 const pedido = new Pedido({ fecha, total, estado, usuario, direccion });
                 if (fecha === '' || total === '' || estado === '' || usuario === '' || direccion === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -937,21 +1832,24 @@ const resolvers = {
                 throw error;
             }
         },
-        async updatePedido (obj, { id, estado }){
+        async updatePedido (obj, { input }){
             try {
-                const pedido = Pedido.findById(id);
+                const { id, estado } = input;
+                const pedido = await Pedido.findById(id);
                 if (!pedido) {
                     throw new Error('Pedido no encontrado');
                 }
                 if (estado !== undefined) pedido.estado = estado;
                 await pedido.save();
+                return pedido;
             } catch (error) {
                 console.error('Error al actualizar el pedido:', error);
                 throw error;
             }
         },
-        async deletePedido (obj, { id }){
+        async deletePedido (obj, { input }){
             try {
+                const { id } = input;
                 const pedido = await Pedido.findByIdAndDelete(id);
                 if (!pedido) {
                     throw new Error('Pedido no encontrado');
@@ -963,10 +1861,11 @@ const resolvers = {
             }
         },
         // Mutations para Evaluacion
-        async addEvaluacion (obj, { puntuacion, usuario }){
+        async addEvaluacion (obj, { input }){
             try {
+                const { puntuacion, usuario } = input;
                 const evaluacion = new Evaluacion({ puntuacion, usuario });
-                if (puntuacion === ''|| usuario === '') {
+                if (puntuacion === '' || usuario === '') {
                     throw new Error('Todos los campos son obligatorios');
                 }
                 await evaluacion.save();
@@ -976,8 +1875,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async updateEvaluacion (obj, { id, puntuacion, comentario }){
+        async updateEvaluacion (obj, { input }){
             try {
+                const { id, puntuacion, comentario } = input;
                 const evaluacion = await Evaluacion.findById(id);
                 if (!evaluacion) {
                     throw new Error('Evaluacion no encontrada');
@@ -990,8 +1890,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async deleteEvaluacion (obj, { id }){
+        async deleteEvaluacion (obj, { input }){
             try {
+                const { id } = input;
                 const evaluacion = await Evaluacion.findByIdAndDelete(id);
                 if (!evaluacion) {
                     throw new Error('Evaluacion no encontrada');
@@ -1003,37 +1904,40 @@ const resolvers = {
             }
         },
         // Mutations para Comentarios
-        async addComentario (obj, { comentario, estado, etiqueta, usuario }){
+        async addComentario (obj, { input }){
             try {
-                const comentario = new Comentarios({ comentario, estado, etiqueta, usuario });
+                const { comentario, estado, etiqueta, usuario } = input;
+                const nuevoComentario = new Comentarios({ comentario, estado, etiqueta, usuario });
                 if (comentario === '' || estado === '' || etiqueta === '' || usuario === '') {
                     throw new Error('Todos los campos son obligatorios');
                 }
-                await comentario.save();
-                return comentario;
+                await nuevoComentario.save();
+                return nuevoComentario;
             } catch (error) {
                 console.error('Error al agregar el comentario:', error);
                 throw error;
             }
         },
-        async updateComentario (obj, { id, comentario, estado, etiqueta }){
+        async updateComentario (obj, { input }){
             try {
-                const comentario = await Comentarios.findById(id);
-                if (!comentario) {
+                const { id, comentario, estado, etiqueta } = input;
+                const comentarioExistente = await Comentarios.findById(id);
+                if (!comentarioExistente) {
                     throw new Error('Comentario no encontrado');
                 }
-                if (comentario !== undefined) comentario.comentario = comentario;
-                if (estado !== undefined) comentario.estado = estado;
-                if (etiqueta !== undefined) comentario.etiqueta = etiqueta;
-                await comentario.save();
-                return comentario;
+                if (comentario !== undefined) comentarioExistente.comentario = comentario;
+                if (estado !== undefined) comentarioExistente.estado = estado;
+                if (etiqueta !== undefined) comentarioExistente.etiqueta = etiqueta;
+                await comentarioExistente.save();
+                return comentarioExistente;
             } catch (error) {
                 console.error('Error al actualizar el comentario:', error);
                 throw error;
             }
         },
-        async deleteComentario (obj, { id }){
+        async deleteComentario (obj, { input }){
             try {
+                const { id } = input;
                 const comentario = await Comentarios.findByIdAndDelete(id);
                 if (!comentario) {
                     throw new Error('Comentario no encontrado');
@@ -1045,8 +1949,9 @@ const resolvers = {
             }
         },
         // Mutations para Articulo
-        async addArticulo (obj, { nombre, precio, etiqueta, imagenes }){
+        async addArticulo (obj, { input }){
             try {
+                const { nombre, precio, etiqueta, imagenes } = input;
                 const articulo = new Articulo({ nombre, precio, etiqueta, imagenes });
                 if (nombre === '' || precio === '' || etiqueta === '' || imagenes === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -1058,8 +1963,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async updateArticulo (obj, { id, nombre, precio, etiqueta, imagenes }){
+        async updateArticulo (obj, { input }){
             try {
+                const { id, nombre, precio, etiqueta, imagenes } = input;
                 const articulo = await Articulo.findById(id);
                 if (!articulo) {
                     throw new Error('Articulo no encontrado');
@@ -1075,8 +1981,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async deleteArticulo (obj, { id }){
+        async deleteArticulo (obj, { input }){
             try {
+                const { id } = input;
                 const articulo = await Articulo.findByIdAndDelete(id);
                 if (!articulo) {
                     throw new Error('Articulo no encontrado');
@@ -1088,20 +1995,18 @@ const resolvers = {
             }
         },
         // Mutations para Imagenes
-        uploadImagen: async (_, { file }) => {
+        uploadImagen: async (_, { input }) => {
+            const { file } = input;
             const { createReadStream, filename } = await file;
       
-            // 1. Genera un nombre único para el archivo
             const uniqueName = `${Date.now()}-${filename}`;
             const filePath = path.join(__dirname, 'uploads', uniqueName);
             
-            // 2. Asegúrate de que la carpeta uploads exista
             const uploadDir = path.join(__dirname, 'uploads');
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir);
             }
 
-            // 3. Guarda el archivo en el servidor
             return new Promise((resolve, reject) => {
               createReadStream()
                 .pipe(createWriteStream(filePath))
@@ -1109,7 +2014,7 @@ const resolvers = {
                   resolve({
                     success: true,
                     message: 'Imagen subida correctamente',
-                    url: `/uploads/${uniqueName}`, // Ruta accesible públicamente
+                    url: `/uploads/${uniqueName}`,
                   });
                 })
                 .on('error', (error) => {
@@ -1117,8 +2022,9 @@ const resolvers = {
                 });
             });
         },
-        async deleteImagen (obj, { id }){
+        async deleteImagen (obj, { input }){
             try {
+                const { id } = input;
                 const imagen = await Imagenes.findByIdAndDelete(id);
                 if (!imagen) {
                     throw new Error('Imagen no encontrada');
@@ -1130,8 +2036,9 @@ const resolvers = {
             }
         },
         // Mutations para InformacionPagina
-        async addInformacionPagina (obj, { nombre, descripcion, imagenes }){
+        async addInformacionPagina (obj, { input }){
             try {
+                const { nombre, descripcion, imagenes } = input;
                 const informacionPagina = new InformacionPagina({ nombre, descripcion, imagenes });
                 if (nombre === '' || descripcion === '' || imagenes === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -1143,8 +2050,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async updateInformacionPagina (obj, { id, nombre, descripcion, imagenes }){
+        async updateInformacionPagina (obj, { input }){
             try {
+                const { id, nombre, descripcion, imagenes } = input;
                 const informacionPagina = await InformacionPagina.findById(id);
                 if (!informacionPagina) {
                     throw new Error('Informacion de la pagina no encontrada');
@@ -1159,8 +2067,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async deleteInformacionPagina (obj, { id }){
+        async deleteInformacionPagina (obj, { input }){
             try {
+                const { id } = input;
                 const informacionPagina = await InformacionPagina.findByIdAndDelete(id);
                 if (!informacionPagina) {
                     throw new Error('Informacion de la pagina no encontrada');
@@ -1172,8 +2081,9 @@ const resolvers = {
             }
         },
         // Mutations para Contacto
-        async addContacto (obj, { nombre, correo, telefono }){
+        async addContacto (obj, { input }){
             try {
+                const { nombre, correo, telefono } = input;
                 const contacto = new Contacto({ nombre, correo, telefono });
                 if (nombre === '' || correo === '' || telefono === '') {
                     throw new Error('Todos los campos son obligatorios');
@@ -1185,8 +2095,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async updateContacto (obj, { id, nombre, correo, telefono }){
+        async updateContacto (obj, { input }){
             try {
+                const { id, nombre, correo, telefono } = input;
                 const contacto = await Contacto.findById(id);
                 if (!contacto) {
                     throw new Error('Contacto no encontrado');
@@ -1201,8 +2112,9 @@ const resolvers = {
                 throw error;
             }
         },
-        async deleteContacto (obj, { id }){
+        async deleteContacto (obj, { input }){
             try {
+                const { id } = input;
                 const contacto = await Contacto.findByIdAndDelete(id);
                 if (!contacto) {
                     throw new Error('Contacto no encontrado');

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './Vista/Login';
 import Register from './Vista/Register';
 import Inicio from './Vista/Inicio';
+import Custom from './Vista/Custom';
 import './App.css';
 
 function App() {
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/inicio" element={<Inicio />} />
+        <Route path="/custom" element={<Custom />} /> 
         {/* Aquí puedes agregar más rutas en el futuro */}
       </Routes>
     </BrowserRouter>

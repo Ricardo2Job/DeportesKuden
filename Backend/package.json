@@ -3,6 +3,7 @@
     "apollo-server": "^3.13.0",
     "apollo-server-express": "^3.13.0",
     "axios": "^1.8.4",
+    "bcryptjs": "^3.0.2",
     "bootstrap": "^5.3.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -11,6 +12,7 @@
     "graphql": "^16.10.0",
     "graphql-tools": "^9.0.18",
     "graphql-upload-ts": "^2.1.2",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.3",
     "nodemon": "^3.1.9",
     "yarn": "^1.22.22"

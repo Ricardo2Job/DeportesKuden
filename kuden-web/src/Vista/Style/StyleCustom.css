@@ -9,6 +9,7 @@
 
 /* Título principal */
 .custom-container h1 {
+  color: white;
   text-align: center;
   margin-bottom: 30px;
 }
@@ -422,4 +423,23 @@ button[type="submit"]:hover {
   flex: 1;
   max-width: 300px;
   transition: max-width 0.3s ease;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background-color: #000000; /* negro */
+  color: #b0b0b0; /* gris */
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.9rem;
+  margin: 0;
+  z-index: 1000;
+}
+
+/* Para evitar que el footer tape contenido */
+.custom-container {
+  padding-bottom: 60px; /* ajusta según el padding del footer */
 }

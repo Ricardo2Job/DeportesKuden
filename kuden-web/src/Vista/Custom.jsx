@@ -9,11 +9,7 @@ const Custom = () => {
   const [comments, setComments] = useState([]);
   const [uploadedImages, setUploadedImages] = useState([]);
   const [newRating, setNewRating] = useState(0);
-
-  // Nueva state para vista seleccionada (frente, espalda, izquierda, derecha)
   const [selectedView, setSelectedView] = useState("frente");
-
-  // Logo camiseta (base64 o URL)
   const [shirtLogo, setShirtLogo] = useState(null);
 
   const modelos = Array.from({ length: 30 }, (_, i) => `modelo${i + 1}`);
@@ -46,7 +42,6 @@ const Custom = () => {
     setUploadedImages([...uploadedImages, ...newImages]);
   };
 
-  // Manejar cambio de logo (solo una imagen, reemplaza la anterior)
   const handleLogoUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -55,7 +50,6 @@ const Custom = () => {
     }
   };
 
-  // Validación solo letras para el nombre
   const handleNameChange = (e) => {
     const value = e.target.value;
     if (/^[a-zA-Z\s]*$/.test(value)) {
@@ -63,7 +57,6 @@ const Custom = () => {
     }
   };
 
-  // Validación número 1 a 99
   const handleNumberChange = (e) => {
     const value = e.target.value;
     const num = parseInt(value, 10);
@@ -91,194 +84,215 @@ const Custom = () => {
   };
 
   return (
-    <div className="custom-container">
-      <h1>Personalización de Camisetas</h1>
+    <div className="app-container">
+      <div className="content-wrapper">
+        <div className="custom-container">
+          <h1>Personalización de Camisetas</h1>
 
-      <div className="custom-layout">
-        <div className="shirt-display" style={{ display: "flex", alignItems: "flex-start" }}>
-          {/* Botones verticales a la izquierda */}
-          <div
-            className="view-buttons-vertical"
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
-              marginRight: "15px",
-              minWidth: "110px",
-            }}
-          >
-            {["frente", "espalda", "izquierda", "derecha"].map((view) => (
-              <button
-                key={view}
-                onClick={() => setSelectedView(view)}
-                className={selectedView === view ? "active" : ""}
+          <div className="custom-layout">
+            <div
+              className="shirt-display"
+              style={{ display: "flex", alignItems: "flex-start" }}
+            >
+              <div
+                className="view-buttons-vertical"
                 style={{
-                  height: "50px",
-                  fontSize: "16px",
-                  cursor: "pointer",
-                  borderRadius: "6px",
-                  border:
-                    selectedView === view ? "2px solid #007BFF" : "1px solid #ccc",
-                  backgroundColor: selectedView === view ? "#E3F2FD" : "#fff",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                  marginRight: "15px",
+                  minWidth: "110px",
                 }}
               >
-                {view.charAt(0).toUpperCase() + view.slice(1)}
-              </button>
-            ))}
+                {["frente", "espalda", "izquierda", "derecha"].map((view) => (
+                  <button
+                    key={view}
+                    onClick={() => setSelectedView(view)}
+                    className={selectedView === view ? "active" : ""}
+                    style={{
+                      height: "50px",
+                      fontSize: "16px",
+                      cursor: "pointer",
+                      borderRadius: "6px",
+                      border:
+                        selectedView === view
+                          ? "2px solid #007BFF"
+                          : "1px solid #ccc",
+                      backgroundColor:
+                        selectedView === view ? "#E3F2FD" : "#fff",
+                    }}
+                  >
+                    {view.charAt(0).toUpperCase() + view.slice(1)}
+                  </button>
+                ))}
+              </div>
+
+              <div
+                className={`shirt-preview ${selectedModel} ${selectedView}`}
+                style={{
+                  flex: 1,
+                  maxWidth: "300px",
+                  transition: "max-width 0.3s ease",
+                }}
+              >
+                <div className="shirt-base">
+                  <p className="shirt-label">
+                    Vista previa: {selectedModel} - {selectedView}
+                  </p>
+                  {uploadedImages.length > 0 && (
+                    <div className="uploaded-images">
+                      {uploadedImages.map((img, idx) => (
+                        <img
+                          key={idx}
+                          src={img}
+                          alt={`Subida ${idx + 1}`}
+                          className="uploaded-image"
+                        />
+                      ))}
+                    </div>
+                  )}
+                  <div className="shirt-details">
+                    <p>{shirtName || "Nombre de camiseta"}</p>
+                    <p>{shirtNumber || "Número"}</p>
+                  </div>
+                  {shirtLogo && (
+                    <div style={{ marginTop: 10 }}>
+                      <p>Logo cargado:</p>
+                      <img
+                        src={shirtLogo}
+                        alt="Logo camiseta"
+                        style={{ maxWidth: "150px", maxHeight: "150px" }}
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="custom-right-panel">
+              <nav className="section-buttons">
+                <button
+                  className={activeSection === "modelos" ? "active" : ""}
+                  onClick={() => setActiveSection("modelos")}
+                >
+                  Modelos de Camiseta
+                </button>
+                <button
+                  className={activeSection === "nombre" ? "active" : ""}
+                  onClick={() => setActiveSection("nombre")}
+                >
+                  Nombre y Número
+                </button>
+                <button
+                  className={activeSection === "imagenes" ? "active" : ""}
+                  onClick={() => setActiveSection("imagenes")}
+                >
+                  Subir Imágenes
+                </button>
+              </nav>
+
+              <div className="section-content">
+                {activeSection === "modelos" && (
+                  <div className="modelos-scroll">
+                    {modelos.map((modelo) => (
+                      <button
+                        key={modelo}
+                        className={`modelo-btn ${
+                          selectedModel === modelo ? "selected" : ""
+                        }`}
+                        onClick={() => setSelectedModel(modelo)}
+                      >
+                        {modelo}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {activeSection === "nombre" && (
+                  <div className="nombre-numero">
+                    <input
+                      type="text"
+                      placeholder="Nombre de la camiseta"
+                      value={shirtName}
+                      onChange={handleNameChange}
+                    />
+                    <input
+                      type="number"
+                      placeholder="Número (1-99)"
+                      value={shirtNumber}
+                      onChange={handleNumberChange}
+                    />
+
+                    <label style={{ marginTop: "10px", display: "block" }}>
+                      Subir Logo:
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleLogoUpload}
+                        style={{ marginTop: "5px" }}
+                      />
+                    </label>
+                  </div>
+                )}
+
+                {activeSection === "imagenes" && (
+                  <div className="subir-imagenes">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleImageUpload}
+                    />
+                    <p>
+                      Sube imágenes y elige dónde colocarlas (función no
+                      implementada aún).
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Vista previa con tamaño reducido */}
-          <div
-            className={`shirt-preview ${selectedModel} ${selectedView}`}
-            style={{ flex: 1, maxWidth: "300px", transition: "max-width 0.3s ease" }}
-          >
-            <div className="shirt-base">
-              <p className="shirt-label">
-                Vista previa: {selectedModel} - {selectedView}
-              </p>
-              {uploadedImages.length > 0 && (
-                <div className="uploaded-images">
-                  {uploadedImages.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt={`Subida ${idx + 1}`}
-                      className="uploaded-image"
-                    />
-                  ))}
-                </div>
-              )}
-              <div className="shirt-details">
-                <p>{shirtName || "Nombre de camiseta"}</p>
-                <p>{shirtNumber || "Número"}</p>
+          <div className="comentarios reseñas-abajo sin-caja">
+            <div className="reseñas-header">
+              <h3>Reseñas</h3>
+              <div className="stars">{renderStars(averageRating)}</div>
+            </div>
+            <form onSubmit={handleAddComment}>
+              <div className="rating-input">
+                {renderStars(newRating, true, handleRatingClick)}
               </div>
-              {shirtLogo && (
-                <div style={{ marginTop: 10 }}>
-                  <p>Logo cargado:</p>
-                  <img
-                    src={shirtLogo}
-                    alt="Logo camiseta"
-                    style={{ maxWidth: "150px", maxHeight: "150px" }}
-                  />
-                </div>
+              <textarea
+                name="comment"
+                placeholder="Deja un comentario..."
+                rows="4"
+              />
+              <button type="submit" disabled={newRating === 0}>
+                Agregar Comentario
+              </button>
+            </form>
+            <div className="comments-list">
+              {comments.length > 0 ? (
+                comments.map((c, i) => (
+                  <div key={i} className="comment">
+                    <div className="comment-stars-number">
+                      {c.rating} <span className="single-star">★</span>
+                    </div>
+                    <p>{c.text}</p>
+                    <hr className="comment-separator" />
+                  </div>
+                ))
+              ) : (
+                <p>No hay comentarios aún.</p>
               )}
             </div>
           </div>
         </div>
-
-        <div className="custom-right-panel">
-          <nav className="section-buttons">
-            <button
-              className={activeSection === "modelos" ? "active" : ""}
-              onClick={() => setActiveSection("modelos")}
-            >
-              Modelos de Camiseta
-            </button>
-            <button
-              className={activeSection === "nombre" ? "active" : ""}
-              onClick={() => setActiveSection("nombre")}
-            >
-              Nombre y Número
-            </button>
-            <button
-              className={activeSection === "imagenes" ? "active" : ""}
-              onClick={() => setActiveSection("imagenes")}
-            >
-              Subir Imágenes
-            </button>
-          </nav>
-
-          <div className="section-content">
-            {activeSection === "modelos" && (
-              <div className="modelos-scroll">
-                {modelos.map((modelo) => (
-                  <button
-                    key={modelo}
-                    className={`modelo-btn ${
-                      selectedModel === modelo ? "selected" : ""
-                    }`}
-                    onClick={() => setSelectedModel(modelo)}
-                  >
-                    {modelo}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {activeSection === "nombre" && (
-              <div className="nombre-numero">
-                <input
-                  type="text"
-                  placeholder="Nombre de la camiseta"
-                  value={shirtName}
-                  onChange={handleNameChange}
-                />
-                <input
-                  type="number"
-                  placeholder="Número (1-99)"
-                  value={shirtNumber}
-                  onChange={handleNumberChange}
-                />
-
-                <label style={{ marginTop: "10px", display: "block" }}>
-                  Subir Logo:
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                    style={{ marginTop: "5px" }}
-                  />
-                </label>
-              </div>
-            )}
-
-            {activeSection === "imagenes" && (
-              <div className="subir-imagenes">
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageUpload}
-                />
-                <p>
-                  Sube imágenes y elige dónde colocarlas (función no implementada
-                  aún).
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
-      {/* Sección Reseñas */}
-      <div className="comentarios reseñas-abajo sin-caja">
-        <div className="reseñas-header">
-          <h3>Reseñas</h3>
-          <div className="stars">{renderStars(averageRating)}</div>
-        </div>
-        <form onSubmit={handleAddComment}>
-          <div className="rating-input">{renderStars(newRating, true, handleRatingClick)}</div>
-          <textarea name="comment" placeholder="Deja un comentario..." rows="4" />
-          <button type="submit" disabled={newRating === 0}>
-            Agregar Comentario
-          </button>
-        </form>
-        <div className="comments-list">
-          {comments.length > 0 ? (
-            comments.map((c, i) => (
-              <div key={i} className="comment">
-                <div className="comment-stars-number">
-                  {c.rating} <span className="single-star">★</span>
-                </div>
-                <p>{c.text}</p>
-                <hr className="comment-separator" />
-              </div>
-            ))
-          ) : (
-            <p>No hay comentarios aún.</p>
-          )}
-        </div>
-      </div>
+      <footer className="footer">
+        © 2025 Deportes Kuden. Todos los derechos reservados.
+      </footer>
     </div>
   );
 };

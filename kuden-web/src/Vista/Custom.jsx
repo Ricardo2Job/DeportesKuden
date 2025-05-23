@@ -10,6 +10,12 @@ const Custom = () => {
   const [uploadedImages, setUploadedImages] = useState([]);
   const [newRating, setNewRating] = useState(0);
 
+  // Nueva state para vista seleccionada (frente, espalda, izquierda, derecha)
+  const [selectedView, setSelectedView] = useState("frente");
+
+  // Logo camiseta (base64 o URL)
+  const [shirtLogo, setShirtLogo] = useState(null);
+
   const modelos = Array.from({ length: 30 }, (_, i) => `modelo${i + 1}`);
 
   const averageRating =
@@ -40,6 +46,32 @@ const Custom = () => {
     setUploadedImages([...uploadedImages, ...newImages]);
   };
 
+  // Manejar cambio de logo (solo una imagen, reemplaza la anterior)
+  const handleLogoUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const logoUrl = URL.createObjectURL(file);
+      setShirtLogo(logoUrl);
+    }
+  };
+
+  // Validación solo letras para el nombre
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    if (/^[a-zA-Z\s]*$/.test(value)) {
+      setShirtName(value);
+    }
+  };
+
+  // Validación número 1 a 99
+  const handleNumberChange = (e) => {
+    const value = e.target.value;
+    const num = parseInt(value, 10);
+    if (value === "" || (num >= 1 && num <= 99)) {
+      setShirtNumber(value);
+    }
+  };
+
   const renderStars = (rating, clickable = false, onClickFn) => {
     return [...Array(5)].map((_, i) => {
       const starValue = i + 1;
@@ -63,10 +95,47 @@ const Custom = () => {
       <h1>Personalización de Camisetas</h1>
 
       <div className="custom-layout">
-        <div className="shirt-display">
-          <div className={`shirt-preview ${selectedModel}`}>
+        <div className="shirt-display" style={{ display: "flex", alignItems: "flex-start" }}>
+          {/* Botones verticales a la izquierda */}
+          <div
+            className="view-buttons-vertical"
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              marginRight: "15px",
+              minWidth: "110px",
+            }}
+          >
+            {["frente", "espalda", "izquierda", "derecha"].map((view) => (
+              <button
+                key={view}
+                onClick={() => setSelectedView(view)}
+                className={selectedView === view ? "active" : ""}
+                style={{
+                  height: "50px",
+                  fontSize: "16px",
+                  cursor: "pointer",
+                  borderRadius: "6px",
+                  border:
+                    selectedView === view ? "2px solid #007BFF" : "1px solid #ccc",
+                  backgroundColor: selectedView === view ? "#E3F2FD" : "#fff",
+                }}
+              >
+                {view.charAt(0).toUpperCase() + view.slice(1)}
+              </button>
+            ))}
+          </div>
+
+          {/* Vista previa con tamaño reducido */}
+          <div
+            className={`shirt-preview ${selectedModel} ${selectedView}`}
+            style={{ flex: 1, maxWidth: "300px", transition: "max-width 0.3s ease" }}
+          >
             <div className="shirt-base">
-              <p className="shirt-label">Vista previa: {selectedModel}</p>
+              <p className="shirt-label">
+                Vista previa: {selectedModel} - {selectedView}
+              </p>
               {uploadedImages.length > 0 && (
                 <div className="uploaded-images">
                   {uploadedImages.map((img, idx) => (
@@ -83,12 +152,21 @@ const Custom = () => {
                 <p>{shirtName || "Nombre de camiseta"}</p>
                 <p>{shirtNumber || "Número"}</p>
               </div>
+              {shirtLogo && (
+                <div style={{ marginTop: 10 }}>
+                  <p>Logo cargado:</p>
+                  <img
+                    src={shirtLogo}
+                    alt="Logo camiseta"
+                    style={{ maxWidth: "150px", maxHeight: "150px" }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <div className="custom-right-panel">
-          {/* Menú sin comentarios */}
           <nav className="section-buttons">
             <button
               className={activeSection === "modelos" ? "active" : ""}
@@ -133,14 +211,24 @@ const Custom = () => {
                   type="text"
                   placeholder="Nombre de la camiseta"
                   value={shirtName}
-                  onChange={(e) => setShirtName(e.target.value)}
+                  onChange={handleNameChange}
                 />
                 <input
                   type="number"
-                  placeholder="Número"
+                  placeholder="Número (1-99)"
                   value={shirtNumber}
-                  onChange={(e) => setShirtNumber(e.target.value)}
+                  onChange={handleNumberChange}
                 />
+
+                <label style={{ marginTop: "10px", display: "block" }}>
+                  Subir Logo:
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleLogoUpload}
+                    style={{ marginTop: "5px" }}
+                  />
+                </label>
               </div>
             )}
 
@@ -162,7 +250,7 @@ const Custom = () => {
         </div>
       </div>
 
-      {/* Sección Reseñas fuera del layout, sin caja */}
+      {/* Sección Reseñas */}
       <div className="comentarios reseñas-abajo sin-caja">
         <div className="reseñas-header">
           <h3>Reseñas</h3>
@@ -170,11 +258,7 @@ const Custom = () => {
         </div>
         <form onSubmit={handleAddComment}>
           <div className="rating-input">{renderStars(newRating, true, handleRatingClick)}</div>
-          <textarea
-            name="comment"
-            placeholder="Deja un comentario..."
-            rows="4"
-          />
+          <textarea name="comment" placeholder="Deja un comentario..." rows="4" />
           <button type="submit" disabled={newRating === 0}>
             Agregar Comentario
           </button>
@@ -183,8 +267,11 @@ const Custom = () => {
           {comments.length > 0 ? (
             comments.map((c, i) => (
               <div key={i} className="comment">
-                <div className="comment-stars">{renderStars(c.rating)}</div>
+                <div className="comment-stars-number">
+                  {c.rating} <span className="single-star">★</span>
+                </div>
                 <p>{c.text}</p>
+                <hr className="comment-separator" />
               </div>
             ))
           ) : (

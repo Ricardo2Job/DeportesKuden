@@ -1,0 +1,45 @@
+/* src/Vista/Style/StyleBomberos.css */
+
+.bomberos-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(to right, #ff512f, #dd2476);
+  padding: 2rem;
+}
+
+.bomberos-card {
+  text-align: center;
+  background-color: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.bomberos-image {
+  width: 100%;
+  max-width: 300px;
+  height: auto;
+  margin-bottom: 1.5rem;
+}
+
+.bomberos-title {
+  font-size: 2rem;
+  color: #b30000;
+  margin-bottom: 0.5rem;
+}
+
+.bomberos-subtitle {
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* Animación simple */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,10 +1,10 @@
-import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import './App.css';
+import Bomberos from './Vista/Bomberos';
+import Custom from './Vista/Custom';
+import Inicio from './Vista/Inicio';
 import Login from './Vista/Login';
 import Register from './Vista/Register';
-import Inicio from './Vista/Inicio';
-import Custom from './Vista/Custom';
-import './App.css';
 
 function App() {
   return (
@@ -14,6 +14,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/inicio" element={<Inicio />} />
         <Route path="/custom" element={<Custom />} /> 
+        <Route path="/Bomberos" element={<Bomberos/>} />
         {/* Aquí puedes agregar más rutas en el futuro */}
       </Routes>
     </BrowserRouter>

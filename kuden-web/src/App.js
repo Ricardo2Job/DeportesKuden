@@ -1,4 +1,3 @@
-import * as mongoose from 'mongoose';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Bomberos from './Vista/Bomberos';
@@ -15,27 +14,10 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/inicio" element={<Inicio />} />
         <Route path="/custom" element={<Custom />} /> 
-        <Route path="/Bomberos" element={<Bomberos/>} />
-        {/* Aquí puedes agregar más rutas en el futuro */}
+        <Route path="/Bomberos" element={<Bomberos />} />
       </Routes>
     </BrowserRouter>
   );
 }
 
 export default App;
-const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    emailVerified: {
-        type: Boolean,
-        default: false
-    }
-});
-exports.userSchema = userSchema;

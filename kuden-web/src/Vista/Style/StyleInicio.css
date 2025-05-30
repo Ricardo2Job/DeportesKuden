@@ -318,36 +318,23 @@ html, body {
   padding: 20px;
 }
 
-.contenido-bomberos {
-  max-width: 600px;
+.boton-bomberos-final {
+  margin: 40px 0;
+  display: flex;
+  justify-content: center;
 }
 
-.imagen-bomberos {
-  width: 200px;
-  margin-bottom: 20px;
-}
-
-.contenido-bomberos h1 {
-  font-size: 2.5rem;
-  color: #d32f2f; /* rojo tipo bomberos */
-}
-
-.contenido-bomberos p {
-  font-size: 1.6rem;
-  color: #555;
-}
-.boton-bomberos {
-  display: inline-block;
-  padding: 10px 20px;
-  margin-top: 30px;
-  background-color: #d32f2f;
+.boton-rojo-final {
+  background-color: #e60000;
   color: white;
-  font-weight: bold;
-  text-decoration: none;
-  border-radius: 5px;
-  transition: background-color 0.3s;
+  border: none;
+  padding: 14px 28px;
+  font-size: 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.boton-bomberos:hover {
-  background-color: #b71c1c;
+.boton-rojo-final:hover {
+  background-color: #cc0000;
 }

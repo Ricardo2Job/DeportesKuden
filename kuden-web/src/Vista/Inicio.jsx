@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Style/StyleInicio.css';
 
@@ -20,10 +20,10 @@ const App = () => {
         <Link to="/inicio" className="logo-link">
           <div className="logo"></div>
         </Link>
-        
+
         <nav className="nav">
           <Link to="/inicio" className="nav-link">Inicio</Link>
-          
+
           <div className="dropdown">
             <button className="dropbtn">Productos</button>
             <div className="dropdown-content">
@@ -32,11 +32,11 @@ const App = () => {
               <Link to="/accesorios">Accesorios</Link>
             </div>
           </div>
-          
+
           <Link to="/company" className="nav-link">Nuestra Compañía</Link>
           <Link to="/contact" className="nav-link">Contáctanos</Link>
         </nav>
-        
+
         <div className="user-menu">
           <div className="dropdown">
             <button className="dropbtn">Usuario</button>
@@ -65,7 +65,14 @@ const App = () => {
       <section className="products-section">
         <h2>Próximamente: Personalización de Poleras Deportivas</h2>
         <p>Diseña tu propia indumentaria deportiva con nuestro nuevo servicio de personalización exclusiva. Crea equipaciones únicas para tu equipo con los colores y diseños que prefieras.</p>
-      </section> 
+      </section>
+
+      {/* Botón rojo adicional al final */}
+      <section className="boton-bomberos-final">
+        <Link to="/bomberos">
+          <button className="boton-rojo-final">Ir a Bomberos Chile</button>
+        </Link>
+      </section>
 
       {/* Footer */}
       <footer className="footer">

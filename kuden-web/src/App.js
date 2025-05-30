@@ -1,3 +1,4 @@
+import * as mongoose from 'mongoose';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import Bomberos from './Vista/Bomberos';
@@ -22,3 +23,19 @@ function App() {
 }
 
 export default App;
+const userSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
+    emailVerified: {
+        type: Boolean,
+        default: false
+    }
+});
+exports.userSchema = userSchema;

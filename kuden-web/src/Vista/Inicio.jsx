@@ -4,7 +4,7 @@ import './Style/StyleInicio.css';
 
 const App = () => {
   const [currentImage, setCurrentImage] = useState(0);
-  const imageCount = 3; // Número total de imágenes en el carrusel
+  const imageCount = 3;
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -35,6 +35,7 @@ const App = () => {
 
           <Link to="/company" className="nav-link">Nuestra Compañía</Link>
           <Link to="/contact" className="nav-link">Contáctanos</Link>
+          <Link to="/bomberos" className="nav-link boton-nav-rojo">Bomberos Chile</Link>
         </nav>
 
         <div className="user-menu">
@@ -61,23 +62,14 @@ const App = () => {
         <button className="custom-btn">Get Started</button>
       </section>
 
-      {/* Espacio para productos */}
+      {/* Sección de Productos */}
       <section className="products-section">
         <h2>Próximamente: Personalización de Poleras Deportivas</h2>
-        <p>Diseña tu propia indumentaria deportiva con nuestro nuevo servicio de personalización exclusiva. Crea equipaciones únicas para tu equipo con los colores y diseños que prefieras.</p>
+        <p>
+          Diseña tu propia indumentaria deportiva con nuestro nuevo servicio de personalización exclusiva. Crea equipaciones únicas para tu equipo con los colores y diseños que prefieras.
+        </p>
       </section>
 
-      {/* Botón rojo adicional al final */}
-      <section className="boton-bomberos-final">
-        <Link to="/bomberos">
-          <button className="boton-rojo-final">Ir a Bomberos Chile</button>
-        </Link>
-      </section>
-
-      {/* Footer */}
-      <footer className="footer">
-        <p>&copy; 2025 Deportes Kuden. Todos los derechos reservados.</p>
-      </footer>
     </div>
   );
 };

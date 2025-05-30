@@ -318,23 +318,16 @@ html, body {
   padding: 20px;
 }
 
-.boton-bomberos-final {
-  margin: 40px 0;
-  display: flex;
-  justify-content: center;
-}
-
-.boton-rojo-final {
-  background-color: #e60000;
+.boton-nav-rojo {
+  background-color: #cc0000;
   color: white;
-  border: none;
-  padding: 14px 28px;
-  font-size: 16px;
-  border-radius: 10px;
-  cursor: pointer;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-left: 10px;
   transition: background-color 0.3s ease;
 }
 
-.boton-rojo-final:hover {
-  background-color: #cc0000;
+.boton-nav-rojo:hover {
+  background-color: #a30000;
 }

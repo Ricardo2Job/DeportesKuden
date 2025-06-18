@@ -1,21 +1,23 @@
-import { Usuario }  from "../models/modelSchemas";
+import { Usuario }  from "../models/modelSchemas.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 export const crearUsuario = async (req, res) => {
   try {
-    const { nombre, apellido, email, contrasena } = req.body;
-    if (!nombre || !apellido || !email || !contrasena) {
+    const { nombre, contrasena, correo, telefono, rol, direccion } = req.body;
+    if (!nombre || !correo || !contrasena || !telefono || !rol) {
       return res.status(400).json({ error: "Todos los campos son obligatorios." });
     }
 
-    const hashedContrasena = bcrypt.hashSync(contrasena, 8);
+    const hashedContrasena = bcrypt.hashSync(contrasena, 10);
 
     const nuevoUsuario = new Usuario({
         nombre,
-        apellido,
-        email,
+        correo: correo,
         contrasena: hashedContrasena,
+        telefono,
+        rol,
+        direccion,
     }); 
     await nuevoUsuario.save();
     res.status(201).json({ mensaje: "Usuario creado correctamente." });
@@ -26,13 +28,13 @@ export const crearUsuario = async (req, res) => {
 
 export const loginUsuario = async (req, res) => {
   try {
-    const { email, contrasena } = req.body;
+    const { correo, contrasena } = req.body;
 
-    if (!email || !contrasena) {
-      return res.status(400).json({ error: "Email y contraseña son obligatorios." });
+    if (!correo || !contrasena) {
+      return res.status(400).json({ error: "Correo y contraseña son obligatorios." });
     }
 
-    const usuario = await Usuario.findOne({ email });
+    const usuario = await Usuario.findOne({ correo });
     if (!usuario) {
       return res.status(401).json({ error: "Credenciales inválidas." });
     }
@@ -44,7 +46,7 @@ export const loginUsuario = async (req, res) => {
 
     // Si usas JWT
     const token = jwt.sign(
-      { id: usuario._id, email: usuario.email },
+      { id: usuario._id, correo: usuario.correo },
       process.env.JWT_SECRET || "secreto", // configura un secreto en .env
       { expiresIn: "1h" }
     );

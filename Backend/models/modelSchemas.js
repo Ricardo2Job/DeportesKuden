@@ -65,6 +65,19 @@ const imagenesSchema = new Schema({
     nombre: { type: String, required: true }
 });
 
+const camisetaPersonalizadaSchema = new Schema({
+  modelo: { type: String, required: true },
+  precio: { type: Number, required: true },
+  color: { type: String, required: false },
+  talla: { type: String, required: false },
+  nombreJugador: { type: String, required: false },
+  numeroJugador: { type: String, required: false },
+  logo: { type: String, required: false },
+  imagenes: [{ type: Schema.Types.ObjectId, ref: 'Imagenes' }],
+  usuario: { type: Schema.Types.ObjectId, ref: 'Usuario', required: true }, // quién la pidió
+  pedido: { type: Schema.Types.ObjectId, ref: 'Pedido' } // opcionalmente link al pedido
+}, { timestamps: true });
+
 const Usuario = mongoose.model('Usuario', usuarioSchema);
 const Direccion = mongoose.model('Direccion', direccionSchema);
 const Comuna = mongoose.model('Comuna', comunaSchema);
@@ -77,6 +90,7 @@ const Articulo = mongoose.model('Articulo', articuloSchema);
 const Imagenes = mongoose.model('Imagenes', imagenesSchema);
 const InformacionPagina = mongoose.model('InformacionPagina', new Schema({})); //TODO Definir el esquema de InformacionPagina
 const Contacto = mongoose.model('Contacto', new Schema({})); //TODO Definir el esquema de Contacto
+const CamisetaPersonalizada = mongoose.model('CamisetaPersonalizada', camisetaPersonalizadaSchema);
 
 export {
     Usuario,
@@ -90,6 +104,7 @@ export {
     Articulo,
     Imagenes,
     InformacionPagina,
-    Contacto
+    Contacto,
+    CamisetaPersonalizada
   };
   

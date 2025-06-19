@@ -616,7 +616,7 @@ const App = () => {
           </div>
 
           <a href="/company" className="nav-link">Nuestra Compañía</a>
-          <a href="/customization" className="nav-link">Personalización</a>
+          <a href="/custom" className="nav-link">Personalización</a>
           <a href="/bomberos" className="nav-link boton-nav-rojo">Bomberos Chile</a>
         </nav>
 

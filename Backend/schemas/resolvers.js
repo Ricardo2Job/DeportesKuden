@@ -1593,6 +1593,19 @@ const resolvers = {
                 console.error('Error al obtener el contacto:', error);
                 throw error;
             }
+        },
+        //Queries para personalización
+        getCamisetasPersonalizadas: async () => {
+                return await CamisetaPersonalizada.find()
+                    .populate('usuario')
+                    .populate('imagenes')
+                    .populate('pedido');
+                },
+        getCamisetasByUsuario: async (obj, { usuarioId }) => {
+                return await CamisetaPersonalizada.find({ usuario: usuarioId })
+                    .populate('usuario')
+                    .populate('imagenes')
+                    .populate('pedido');
         }
     },
     Mutation: {
@@ -2124,7 +2137,26 @@ const resolvers = {
                 console.error('Error al eliminar el contacto:', error);
                 throw error;
             }
-        }
+        },
+        // Mutations para Personalizacion
+        addCamisetaPersonalizada: async (obj, { input }) => {
+            const camiseta = new CamisetaPersonalizada(input);
+            await camiseta.save();
+            return camiseta;
+        },
+
+        updateCamisetaPersonalizada: async (obj, { input }) => {
+            const { id, ...rest } = input;
+            const camiseta = await CamisetaPersonalizada.findByIdAndUpdate(id, rest, { new: true });
+            if (!camiseta) throw new Error('Camiseta no encontrada');
+            return camiseta;
+        },
+
+        deleteCamisetaPersonalizada: async (obj, { id }) => {
+            const camiseta = await CamisetaPersonalizada.findByIdAndDelete(id);
+            if (!camiseta) throw new Error('Camiseta no encontrada');
+            return camiseta;
+        },
     }
 };
 

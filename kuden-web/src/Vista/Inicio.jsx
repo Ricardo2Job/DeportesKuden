@@ -624,7 +624,7 @@ const App = () => {
           <div className="dropdown">
             <button className="dropbtn">Usuario ▼</button>
             <div className="dropdown-content">
-              <a href="/">Iniciar Sesión</a>
+              <a href="/login">Iniciar Sesión</a>
               <a href="/register">Registrarse</a>
               <a href="/account">Mi Cuenta</a>
               <button className="logout-btn">Cerrar Sesión</button>

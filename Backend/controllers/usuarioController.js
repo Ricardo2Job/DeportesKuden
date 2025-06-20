@@ -9,7 +9,7 @@ export const crearUsuario = async (req, res) => {
       return res.status(400).json({ error: "Todos los campos son obligatorios." });
     }
 
-    const hashedContrasena = bcrypt.hashSync(contrasena, 10);
+    const hashedContrasena = await bcrypt.hash(contrasena, 10);
 
     const nuevoUsuario = new Usuario({
         nombre,
@@ -28,8 +28,8 @@ export const crearUsuario = async (req, res) => {
 
 export const loginUsuario = async (req, res) => {
   try {
+    
     const { correo, contrasena } = req.body;
-
     if (!correo || !contrasena) {
       return res.status(400).json({ error: "Correo y contraseña son obligatorios." });
     }
@@ -41,10 +41,10 @@ export const loginUsuario = async (req, res) => {
 
     const contrasenaValida = await bcrypt.compare(contrasena, usuario.contrasena);
     if (!contrasenaValida) {
+      console.log(contrasenaValida);
       return res.status(401).json({ error: "Credenciales inválidas." });
     }
 
-    // Si usas JWT
     const token = jwt.sign(
       { id: usuario._id, correo: usuario.correo },
       process.env.JWT_SECRET || "secreto", // configura un secreto en .env

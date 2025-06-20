@@ -28,7 +28,7 @@ import {
 import {resolvers} from './schemas/resolvers.js';
 import {typeDefs} from './schemas/typeDefs.js';
 
-import { crearUsuario, loginUsuario } from './controllers/usuarioController.js';
+import authRoutes from './Routes/Auth.js';
 
 // Configuración de variables de entorno
 config();
@@ -67,11 +67,10 @@ async function startServer() {
 
 }
 
-app.post('/api/usuarios',crearUsuario);
-app.post('/api/login', loginUsuario);
+//app.use('/api', authRoutes);
 
-app.listen(5000, () => {
+/*app.listen(5000, () => {
   console.log('🚀 Servidor Express corriendo en http://localhost:5000');
-});
+});*/
 
 startServer();

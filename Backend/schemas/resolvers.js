@@ -1606,7 +1606,20 @@ const resolvers = {
                     .populate('usuario')
                     .populate('imagenes')
                     .populate('pedido');
-        }
+        },
+        async getCamisetasPersonalizadasByPedido (obj, { pedidoId }){
+            try {
+                const camisetas = await CamisetaPersonalizada.find({ pedido: pedidoId })
+                    .populate('usuario')
+                    .populate('imagenes')
+                    .populate('pedido');
+
+                return camisetas;
+            } catch (error) {
+                console.error('Error al obtener las camisetas personalizadas por pedido:', error);
+                throw error;
+            }
+        },
     },
     Mutation: {
         // Mutations para Usuario

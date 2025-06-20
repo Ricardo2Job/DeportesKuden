@@ -198,6 +198,35 @@ const typeDefs = gql`
         direccion: ID
     }
 
+    # DEFINICION DE CAMISETA PERSONALIZADA
+
+    type CamisetaPersonalizada {
+        id: ID!
+        modelo: String!
+        precio: Int!
+        color: String
+        talla: String
+        nombreJugador: String
+        numeroJugador: String
+        logo: String
+        imagenes: [Imagenes]
+        usuario: Usuario!
+        pedido: Pedido
+    }
+
+    input CamisetaPersonalizadaInput {
+        modelo: String!
+        precio: Int!
+        color: String
+        talla: String
+        nombreJugador: String
+        numeroJugador: String
+        logo: String
+        imagenes: [ID]
+        usuario: ID!
+        pedido: ID
+    }
+
     # INICIOOOOOO DE LAS QUERYYYYYYYS
 
     type Query {
@@ -289,6 +318,11 @@ const typeDefs = gql`
         getContacto(id: ID!): Contacto
         getContactos: [Contacto]
 
+        # Queries para Camiseta Personalizada
+        getCamisetaPersonalizada(id: ID!): CamisetaPersonalizada
+        getCamisetasPersonalizadas: [CamisetaPersonalizada]
+        getCamisetasByUsuario(usuario: ID!): [CamisetaPersonalizada]
+        getCamisetasPersonalizadasByPedido(pedido: ID!): [CamisetaPersonalizada]
     }
 
     # INICIOOOOOO DE LAS MUTACIONES
@@ -354,6 +388,12 @@ const typeDefs = gql`
         addContacto(input: ContactoInput): Contacto
         updateContacto(id: ID!, input: ContactoInput): Contacto
         deleteContacto(id: ID!): Alert
+
+        # Mutation para Camiseta Personalizada
+        addCamisetaPersonalizada(input: CamisetaPersonalizadaInput): CamisetaPersonalizada
+        updateCamisetaPersonalizada(id: ID!, input: CamisetaPersonalizadaInput): CamisetaPersonalizada
+        deleteCamisetaPersonalizada(id: ID!): Alert
+
     }
 `;
 

@@ -21,7 +21,8 @@ import {
   Articulo,
   Imagenes,
   InformacionPagina,
-  Contacto
+  Contacto,
+  CamisetaPersonalizada
 } from './models/modelSchemas.js';
 
 // Resolver y tipo de esquemas

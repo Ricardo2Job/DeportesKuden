@@ -695,7 +695,7 @@ const App = () => {
             permite visualizar tus ideas en tiempo real y crear equipaciones
             verdaderamente profesionales.
           </p>
-          <button className="custom-btn">Comenzar Personalización</button>
+          <button className="custom-btn">Comenzar Personalizacisón</button>
         </div>
       </section>
 

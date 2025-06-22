@@ -1,11 +1,34 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+
+// Importa cada parte de las imágenes
+import camisetaFrenteCuello from './Imagenes/camiseta_frente_cuello.png';
+import camisetaFrenteTorso from './Imagenes/camiseta_frente_torso.png';
+import camisetaFrenteMangas from './Imagenes/camiseta_frente_mangas.png';
+
+import camisetaIzquierdaTorsoFrente from './Imagenes/camiseta_izquierda_torso_frente.png';
+import camisetaIzquierdaTorsoEspalda from './Imagenes/camiseta_izquierda_torso_espalda.png';
+import camisetaIzquierdaManga from './Imagenes/camiseta_izquierda_manga.png';
+import camisetaIzquierdaCuello from './Imagenes/camiseta_izquierda_cuello.png';
+
+import camisetaEspaldaTorso from './Imagenes/camiseta_espalda_torso.png';
+import camisetaEspaldaMangas from './Imagenes/camiseta_espalda_mangas.png';
+import camisetaEspaldaCuello from './Imagenes/camiseta_espalda_cuello.png';
+
+import camisetaDerechaTorsoFrente from './Imagenes/camiseta_derecha_torso_frente.png';
+import camisetaDerechaTorsoEspalda from './Imagenes/camiseta_derecha_torso_espalda.png';
+import camisetaDerechaManga from './Imagenes/camiseta_derecha_manga.png';
+import camisetaDerechaCuello from './Imagenes/camiseta_derecha_cuello.png';
 
 const Custom = () => {
   const [activeSection, setActiveSection] = useState("modelos");
   const [selectedModel, setSelectedModel] = useState("modelo1");
   const [shirtName, setShirtName] = useState("");
   const [shirtNumber, setShirtNumber] = useState("");
-  const [shirtColor, setShirtColor] = useState("#dc2626");
+  const [shirtColors, setShirtColors] = useState({
+    torso: "#dc2626",
+    mangas: "#dc2626",
+    cuello: "#dc2626"
+  });
   const [shirtSize, setShirtSize] = useState("M");
   const [comments, setComments] = useState([
     {
@@ -23,8 +46,22 @@ const Custom = () => {
   const [newRating, setNewRating] = useState(0);
   const [selectedView, setSelectedView] = useState("frente");
   const [shirtLogo, setShirtLogo] = useState(null);
-  const [logoPosition, setLogoPosition] = useState({ x: 50, y: 30 });
-  const [textPosition, setTextPosition] = useState({ x: 50, y: 60 });
+  const [positions, setPositions] = useState({
+    frente: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
+    espalda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
+    izquierda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
+    derecha: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } }
+  });
+  const [dragging, setDragging] = useState({ type: null, view: null });
+
+  const nameRef = useRef(null);
+  const numberRef = useRef(null);
+
+  const canvasRefs = {
+    torso: useRef(null),
+    mangas: useRef(null),
+    cuello: useRef(null)
+  };
 
   const modelos = Array.from({ length: 12 }, (_, i) => ({
     id: `modelo${i + 1}`,
@@ -33,18 +70,48 @@ const Custom = () => {
   }));
 
   const sizes = ["XS", "S", "M", "L", "XL", "XXL"];
-  const colors = [
-    { name: "Rojo", value: "#dc2626" },
-    { name: "Azul", value: "#2563eb" },
-    { name: "Verde", value: "#16a34a" },
-    { name: "Negro", value: "#000000" },
-    { name: "Blanco", value: "#ffffff" },
-    { name: "Amarillo", value: "#eab308" },
-    { name: "Morado", value: "#9333ea" },
-    { name: "Naranja", value: "#ea580c" }
-  ];
 
   const averageRating = comments.length === 0 ? 0 : Math.round(comments.reduce((acc, c) => acc + c.rating, 0) / comments.length);
+
+  const applyColorToCanvas = (canvas, color, imageSrc) => {
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.onload = () => {
+      // Ajustar el tamaño del canvas al tamaño de la imagen
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      const { r, g, b } = hexToRgb(color);
+
+      for (let i = 0; i < data.length; i += 4) {
+        const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        data[i] = r * (avg / 255);
+        data[i + 1] = g * (avg / 255);
+        data[i + 2] = b * (avg / 255);
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    };
+    img.src = imageSrc;
+  };
+
+  const hexToRgb = (hex) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return { r, g, b };
+  };
+
+  useEffect(() => {
+    const shirtImages = getShirtImages();
+    Object.entries(shirtImages).forEach(([key, part]) => {
+      applyColorToCanvas(part.ref.current, part.color, part.src);
+    });
+  }, [shirtColors, selectedView]);
 
   const handleAddComment = (e) => {
     e.preventDefault();
@@ -117,18 +184,86 @@ const Custom = () => {
       model: selectedModel,
       name: shirtName,
       number: shirtNumber,
-      color: shirtColor,
+      colors: shirtColors,
       size: shirtSize,
       logo: shirtLogo,
-      images: uploadedImages
+      images: uploadedImages,
+      positions
     };
     alert("Diseño guardado exitosamente!");
     console.log("Diseño guardado:", design);
   };
 
+  const getShirtImages = () => {
+    switch (selectedView) {
+      case "frente":
+        return {
+          torso: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaFrenteTorso },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaFrenteMangas },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaFrenteCuello }
+        };
+      case "derecha":
+        return {
+          torsoFrente: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaDerechaTorsoFrente },
+          torsoEspalda: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaDerechaTorsoEspalda },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaDerechaManga },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaDerechaCuello }
+        };
+      case "espalda":
+        return {
+          torso: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaEspaldaTorso },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaEspaldaMangas },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaEspaldaCuello }
+        };
+      case "izquierda":
+        return {
+          torsoFrente: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaIzquierdaTorsoFrente },
+          torsoEspalda: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaIzquierdaTorsoEspalda },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaIzquierdaManga },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaIzquierdaCuello }
+        };
+      default:
+        return {
+          torso: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaFrenteTorso },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaFrenteMangas },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaFrenteCuello }
+        };
+    }
+  };
+
+  const handleMouseDown = (e, type) => {
+    setDragging({ type, view: selectedView });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!dragging) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+
+    setPositions(prevPositions => ({
+      ...prevPositions,
+      [dragging.view]: {
+        ...prevPositions[dragging.view],
+        [dragging.type]: { x, y }
+      }
+    }));
+  };
+
+  const handleMouseUp = () => {
+    setDragging({ type: null, view: null });
+  };
+
   return (
     <div className="container">
       <style jsx>{`
+        canvas {
+          width: 100%;
+          height: auto;
+          max-width: 400px;
+          max-height: 400px;
+        }
         * {
           margin: 0;
           padding: 0;
@@ -406,30 +541,37 @@ const Custom = () => {
 
         .shirt-preview {
           width: 100%;
-          height: 500px;
-          background: ${shirtColor};
-          background-image: linear-gradient(135deg, ${shirtColor} 0%, ${shirtColor}dd 100%);
+          height: 400px;
+          background: transparent;
           border-radius: 15px;
           position: relative;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+          box-shadow: none;
           overflow: hidden;
           transition: all 0.3s ease;
         }
 
-        .shirt-content {
-          text-align: center;
-          color: ${shirtColor === '#ffffff' ? '#000000' : '#ffffff'};
-          position: relative;
-          z-index: 2;
+        .shirt-part {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          background: transparent;
+        }
+
+        .shirt-name, .shirt-number {
+          position: absolute;
+          cursor: move;
+          user-select: none;
+          transform: translate(-50%, -50%);
+          z-index: 10;
         }
 
         .shirt-name {
-          font-size: 1.8rem;
+          font-size: 1.3rem;
           font-weight: bold;
-          margin-bottom: 10px;
           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
@@ -441,9 +583,6 @@ const Custom = () => {
 
         .shirt-logo {
           position: absolute;
-          top: ${logoPosition.y}%;
-          left: ${logoPosition.x}%;
-          transform: translate(-50%, -50%);
           max-width: 80px;
           max-height: 80px;
           border-radius: 8px;
@@ -836,7 +975,6 @@ const Custom = () => {
         }
       `}</style>
 
-      {/* Header */}
       <header className="header">
         <div className="logo">Deportes Kuden</div>
         <nav className="nav">
@@ -867,7 +1005,6 @@ const Custom = () => {
         </div>
       </header>
 
-      {/* Page Content */}
       <div className="custom-container">
         <div className="page-header">
           <h1>Personalización de Camisetas</h1>
@@ -887,24 +1024,47 @@ const Custom = () => {
                 </button>
               ))}
             </div>
-            <div className="shirt-preview">
+            <div
+              className="shirt-preview"
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+            >
               {shirtLogo && (
                 <img
                   src={shirtLogo}
                   alt="Logo"
                   className="shirt-logo"
+                  style={{ top: '30%', left: '50%' }}
                 />
               )}
-              <div className="shirt-content">
-                {shirtName && <div className="shirt-name">{shirtName}</div>}
-                {shirtNumber && <div className="shirt-number">{shirtNumber}</div>}
-                {!shirtName && !shirtNumber && (
-                  <div style={{ opacity: 0.5 }}>
-                    <div className="shirt-name">Tu Nombre</div>
-                    <div className="shirt-number">99</div>
-                  </div>
-                )}
-              </div>
+              {Object.entries(getShirtImages()).map(([key, part]) => (
+                <canvas
+                  key={key}
+                  ref={part.ref}
+                  className="shirt-part"
+                />
+              ))}
+              {selectedView === "espalda" && (
+                <div
+                  ref={nameRef}
+                  className="shirt-name"
+                  style={{ top: `${positions[selectedView].name.y}%`, left: `${positions[selectedView].name.x}%` }}
+                  onMouseDown={(e) => handleMouseDown(e, 'name')}
+                >
+                  {shirtName || "Tu Nombre"}
+                </div>
+              )}
+              {(selectedView === "frente" || selectedView === "espalda") && (
+                <div
+                  ref={numberRef}
+                  className="shirt-number"
+                  style={{ top: `${positions[selectedView].number.y}%`, left: `${positions[selectedView].number.x}%` }}
+                  onMouseDown={(e) => handleMouseDown(e, 'number')}
+                >
+                  {shirtNumber || "99"}
+                </div>
+              )}
             </div>
             <div style={{ marginTop: "20px", textAlign: "center", color: "#888" }}>
               <p>Vista: {selectedView} | Modelo: {selectedModel} | Talla: {shirtSize}</p>
@@ -968,17 +1128,30 @@ const Custom = () => {
               )}
 
               {activeSection === "colores" && (
-                <div className="form-group">
-                  <label>Selecciona un color:</label>
-                  <div className="color-grid">
-                    {colors.map((color) => (
-                      <div
-                        key={color.value}
-                        className={`color-option ${shirtColor === color.value ? "selected" : ""}`}
-                        style={{ backgroundColor: color.value }}
-                        onClick={() => setShirtColor(color.value)}
-                      ></div>
-                    ))}
+                <div>
+                  <div className="form-group">
+                    <label>Color del Torso:</label>
+                    <input
+                      type="color"
+                      value={shirtColors.torso}
+                      onChange={(e) => setShirtColors({...shirtColors, torso: e.target.value})}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Color de las Mangas:</label>
+                    <input
+                      type="color"
+                      value={shirtColors.mangas}
+                      onChange={(e) => setShirtColors({...shirtColors, mangas: e.target.value})}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Color del Cuello:</label>
+                    <input
+                      type="color"
+                      value={shirtColors.cuello}
+                      onChange={(e) => setShirtColors({...shirtColors, cuello: e.target.value})}
+                    />
                   </div>
                 </div>
               )}

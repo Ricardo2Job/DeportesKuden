@@ -42,23 +42,30 @@ const Custom = () => {
       author: "María López"
     }
   ]);
-  const [uploadedImages, setUploadedImages] = useState([]);
   const [newRating, setNewRating] = useState(0);
   const [selectedView, setSelectedView] = useState("frente");
-  const [shirtLogo, setShirtLogo] = useState(null);
+  const [shirtLogos, setShirtLogos] = useState({
+    frente: [],
+    espalda: [],
+    izquierda: [],
+    derecha: []
+  });
   const [positions, setPositions] = useState({
     frente: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
     espalda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
     izquierda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
     derecha: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } }
   });
-  const [dragging, setDragging] = useState({ type: null, view: null });
+  const [dragging, setDragging] = useState({ type: null, view: null, index: null });
+  const [imageError, setImageError] = useState(null);
 
   const nameRef = useRef(null);
   const numberRef = useRef(null);
+  const logoRefs = useRef([]);
 
   const canvasRefs = {
-    torso: useRef(null),
+    torso1: useRef(null),
+    torso2: useRef(null),
     mangas: useRef(null),
     cuello: useRef(null)
   };
@@ -73,12 +80,18 @@ const Custom = () => {
 
   const averageRating = comments.length === 0 ? 0 : Math.round(comments.reduce((acc, c) => acc + c.rating, 0) / comments.length);
 
+  const hexToRgb = (hex) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return { r, g, b };
+  };
+
   const applyColorToCanvas = (canvas, color, imageSrc) => {
     const ctx = canvas.getContext('2d');
     const img = new Image();
     img.crossOrigin = "Anonymous";
     img.onload = () => {
-      // Ajustar el tamaño del canvas al tamaño de la imagen
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
@@ -96,20 +109,56 @@ const Custom = () => {
 
       ctx.putImageData(imageData, 0, 0);
     };
+    img.onerror = () => {
+      setImageError(`Error loading image: ${imageSrc}`);
+      console.error(`Error loading image: ${imageSrc}`);
+    };
     img.src = imageSrc;
   };
 
-  const hexToRgb = (hex) => {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    return { r, g, b };
+  const getShirtImages = () => {
+    switch (selectedView) {
+      case "frente":
+        return {
+          torso1: { ref: canvasRefs.torso1, color: shirtColors.torso, src: camisetaFrenteTorso },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaFrenteMangas },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaFrenteCuello }
+        };
+      case "derecha":
+        return {
+          torso1: { ref: canvasRefs.torso1, color: shirtColors.torso, src: camisetaDerechaTorsoFrente },
+          torso2: { ref: canvasRefs.torso2, color: shirtColors.torso, src: camisetaDerechaTorsoEspalda },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaDerechaManga },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaDerechaCuello }
+        };
+      case "espalda":
+        return {
+          torso1: { ref: canvasRefs.torso1, color: shirtColors.torso, src: camisetaEspaldaTorso },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaEspaldaMangas },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaEspaldaCuello }
+        };
+      case "izquierda":
+        return {
+          torso1: { ref: canvasRefs.torso1, color: shirtColors.torso, src: camisetaIzquierdaTorsoFrente },
+          torso2: { ref: canvasRefs.torso2, color: shirtColors.torso, src: camisetaIzquierdaTorsoEspalda },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaIzquierdaManga },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaIzquierdaCuello }
+        };
+      default:
+        return {
+          torso1: { ref: canvasRefs.torso1, color: shirtColors.torso, src: camisetaFrenteTorso },
+          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaFrenteMangas },
+          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaFrenteCuello }
+        };
+    }
   };
 
   useEffect(() => {
     const shirtImages = getShirtImages();
     Object.entries(shirtImages).forEach(([key, part]) => {
-      applyColorToCanvas(part.ref.current, part.color, part.src);
+      if (part.ref.current) {
+        applyColorToCanvas(part.ref.current, part.color, part.src);
+      }
     });
   }, [shirtColors, selectedView]);
 
@@ -134,18 +183,16 @@ const Custom = () => {
     setNewRating(value);
   };
 
-  const handleImageUpload = (e) => {
+  const handleLogoUpload = (e) => {
     const files = Array.from(e.target.files);
-    const newImages = files.map((file) => URL.createObjectURL(file));
-    setUploadedImages([...uploadedImages, ...newImages]);
+    const newLogos = files.map((file) => URL.createObjectURL(file));
+    setShirtLogos({ ...shirtLogos, [selectedView]: [...shirtLogos[selectedView], ...newLogos] });
   };
 
-  const handleLogoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const logoUrl = URL.createObjectURL(file);
-      setShirtLogo(logoUrl);
-    }
+  const handleRemoveLogo = (index) => {
+    const updatedLogos = [...shirtLogos[selectedView]];
+    updatedLogos.splice(index, 1);
+    setShirtLogos({ ...shirtLogos, [selectedView]: updatedLogos });
   };
 
   const handleNameChange = (e) => {
@@ -186,53 +233,15 @@ const Custom = () => {
       number: shirtNumber,
       colors: shirtColors,
       size: shirtSize,
-      logo: shirtLogo,
-      images: uploadedImages,
+      logos: shirtLogos,
       positions
     };
     alert("Diseño guardado exitosamente!");
     console.log("Diseño guardado:", design);
   };
 
-  const getShirtImages = () => {
-    switch (selectedView) {
-      case "frente":
-        return {
-          torso: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaFrenteTorso },
-          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaFrenteMangas },
-          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaFrenteCuello }
-        };
-      case "derecha":
-        return {
-          torsoFrente: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaDerechaTorsoFrente },
-          torsoEspalda: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaDerechaTorsoEspalda },
-          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaDerechaManga },
-          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaDerechaCuello }
-        };
-      case "espalda":
-        return {
-          torso: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaEspaldaTorso },
-          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaEspaldaMangas },
-          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaEspaldaCuello }
-        };
-      case "izquierda":
-        return {
-          torsoFrente: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaIzquierdaTorsoFrente },
-          torsoEspalda: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaIzquierdaTorsoEspalda },
-          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaIzquierdaManga },
-          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaIzquierdaCuello }
-        };
-      default:
-        return {
-          torso: { ref: canvasRefs.torso, color: shirtColors.torso, src: camisetaFrenteTorso },
-          mangas: { ref: canvasRefs.mangas, color: shirtColors.mangas, src: camisetaFrenteMangas },
-          cuello: { ref: canvasRefs.cuello, color: shirtColors.cuello, src: camisetaFrenteCuello }
-        };
-    }
-  };
-
-  const handleMouseDown = (e, type) => {
-    setDragging({ type, view: selectedView });
+  const handleMouseDown = (e, type, index) => {
+    setDragging({ type, view: selectedView, index });
   };
 
   const handleMouseMove = (e) => {
@@ -252,7 +261,7 @@ const Custom = () => {
   };
 
   const handleMouseUp = () => {
-    setDragging({ type: null, view: null });
+    setDragging({ type: null, view: null, index: null });
   };
 
   return (
@@ -561,7 +570,7 @@ const Custom = () => {
           background: transparent;
         }
 
-        .shirt-name, .shirt-number {
+        .shirt-name, .shirt-number, .shirt-logo {
           position: absolute;
           cursor: move;
           user-select: none;
@@ -582,11 +591,9 @@ const Custom = () => {
         }
 
         .shirt-logo {
-          position: absolute;
           max-width: 80px;
           max-height: 80px;
           border-radius: 8px;
-          z-index: 3;
         }
 
         .custom-panel {
@@ -777,11 +784,32 @@ const Custom = () => {
           margin-top: 20px;
         }
 
+        .uploaded-image-container {
+          position: relative;
+          display: inline-block;
+        }
+
         .uploaded-image {
           width: 100%;
           height: 80px;
           object-fit: cover;
           border-radius: 8px;
+        }
+
+        .remove-image {
+          position: absolute;
+          top: 5px;
+          right: 5px;
+          background: rgba(0, 0, 0, 0.7);
+          color: white;
+          border-radius: 50%;
+          width: 20px;
+          height: 20px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          cursor: pointer;
+          font-size: 12px;
         }
 
         .action-buttons {
@@ -1024,20 +1052,24 @@ const Custom = () => {
                 </button>
               ))}
             </div>
+            {imageError && <p style={{ color: 'red' }}>{imageError}</p>}
             <div
               className="shirt-preview"
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             >
-              {shirtLogo && (
+              {shirtLogos[selectedView].map((logo, index) => (
                 <img
-                  src={shirtLogo}
+                  key={index}
+                  ref={el => logoRefs.current[index] = el}
+                  src={logo}
                   alt="Logo"
                   className="shirt-logo"
-                  style={{ top: '30%', left: '50%' }}
+                  style={{ top: `${positions[selectedView]?.logo?.y || 50}%`, left: `${positions[selectedView]?.logo?.x || 50}%` }}
+                  onMouseDown={(e) => handleMouseDown(e, 'logo', index)}
                 />
-              )}
+              ))}
               {Object.entries(getShirtImages()).map(([key, part]) => (
                 <canvas
                   key={key}
@@ -1098,16 +1130,10 @@ const Custom = () => {
                 🆔 Nombre y Número
               </button>
               <button
-                className={`section-btn ${activeSection === "logo" ? "active" : ""}`}
-                onClick={() => setActiveSection("logo")}
+                className={`section-btn ${activeSection === "estampados" ? "active" : ""}`}
+                onClick={() => setActiveSection("estampados")}
               >
-                🖼️ Logo
-              </button>
-              <button
-                className={`section-btn ${activeSection === "imagenes" ? "active" : ""}`}
-                onClick={() => setActiveSection("imagenes")}
-              >
-                📷 Imágenes
+                🖼️ Estampados
               </button>
             </nav>
 
@@ -1198,31 +1224,24 @@ const Custom = () => {
                 </div>
               )}
 
-              {activeSection === "logo" && (
-                <div className="upload-area" onClick={() => document.getElementById('logo-upload').click()}>
-                  <p>Haz clic para subir un logo</p>
-                  <input
-                    id="logo-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleLogoUpload}
-                  />
-                </div>
-              )}
-
-              {activeSection === "imagenes" && (
-                <div className="upload-area" onClick={() => document.getElementById('image-upload').click()}>
-                  <p>Haz clic para subir imágenes</p>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageUpload}
-                  />
+              {activeSection === "estampados" && (
+                <div>
+                  <div className="upload-area" onClick={() => document.getElementById('logo-upload').click()}>
+                    <p>Haz clic para subir un estampado</p>
+                    <input
+                      id="logo-upload"
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleLogoUpload}
+                    />
+                  </div>
                   <div className="uploaded-images">
-                    {uploadedImages.map((img, idx) => (
-                      <img key={idx} src={img} alt={`Subida ${idx + 1}`} className="uploaded-image" />
+                    {shirtLogos[selectedView].map((logo, index) => (
+                      <div key={index} className="uploaded-image-container">
+                        <img src={logo} alt={`Logo ${index}`} className="uploaded-image" />
+                        <div className="remove-image" onClick={() => handleRemoveLogo(index)}>X</div>
+                      </div>
                     ))}
                   </div>
                 </div>

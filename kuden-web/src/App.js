@@ -6,6 +6,7 @@ import Company from './Vista/Company';
 import Inicio from './Vista/Inicio';
 import Login from './Vista/Login';
 import Register from './Vista/Register';
+import Admin from './Vista/Administracion';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/custom" element={<Custom />} /> 
         <Route path="/company" element={<Company />} /> 
         <Route path="/Bomberos" element={<Bomberos />} />
+        <Route path="/Administracion" element={<Admin />} />
       </Routes>
     </BrowserRouter>
   );

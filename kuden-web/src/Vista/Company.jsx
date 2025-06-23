@@ -11,8 +11,8 @@ const NuestraCompania = () => {
 
   const stats = [
     { label: "Años de Experiencia", value: 10, suffix: "+" },
-    { label: "Clientes Satisfechos", value: 500, suffix: "+" },
-    { label: "Productos Entregados", value: 10000, suffix: "+" },
+    { label: "Clientes Satisfechos", value: 1500, suffix: "+" },
+    { label: "Productos Entregados", value: 12000, suffix: "+" },
     { label: "Satisfacción del Cliente", value: 98, suffix: "%" }
   ];
 

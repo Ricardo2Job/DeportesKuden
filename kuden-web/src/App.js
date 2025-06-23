@@ -7,6 +7,7 @@ import Inicio from './Vista/Inicio';
 import Login from './Vista/Login';
 import Register from './Vista/Register';
 import Admin from './Vista/Administracion';
+import Productos from './Vista/Productos';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/company" element={<Company />} /> 
         <Route path="/Bomberos" element={<Bomberos />} />
         <Route path="/Administracion" element={<Admin />} />
+        <Route path="/Productos" element={<Productos />} />
       </Routes>
     </BrowserRouter>
   );

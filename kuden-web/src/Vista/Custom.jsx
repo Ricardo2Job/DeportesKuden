@@ -285,18 +285,20 @@ const Custom = () => {
         }
 
         .header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 1rem 2rem;
-          background: rgba(0, 0, 0, 0.95);
-          backdrop-filter: blur(20px);
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-          border-bottom: 2px solid #666;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(20px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 2px solid #666;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    width: 100vw;
+    margin-left: calc(-50vw + 50%);
+  }
 
         .logo {
           height: 45px;

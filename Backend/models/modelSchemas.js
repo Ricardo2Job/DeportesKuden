@@ -7,7 +7,7 @@ const usuarioSchema = new Schema({
     correo: { type: String, required: true, unique: true, match: [/.+\@.+\..+/, 'Por favor ingrese un correo valido'] },
     telefono: { type: String, required: true },
     rol: { type: String, required: true, enum:['usuario', 'admin'], default: 'usuario' },
-    direccion: { type: Schema.Types.ObjectId, ref: 'Direccion' }
+    direccion: { type: String, required: true },
 });
 
 const direccionSchema = new Schema({
@@ -48,7 +48,7 @@ const evaluacionSchema = new Schema({
 const comentariosSchema = new Schema({
     comentario: { type: String, required: true },
     estado: { type: String, required: true, enum:['pendiente', 'aprobado'], default: 'pendiente' },
-    etiqueta: { type: String, required: true, enum:['camisetas', 'calsetas', 'banderin']}, //TODO Este hay que comprobar las etiquetas posibles
+    etiqueta: { type: String, required: true, enum:['camiseta', 'calseta', 'banderin'], default: 'camiseta'}, //TODO Este hay que comprobar las etiquetas posibles
     usuario: { type: Schema.Types.ObjectId, ref: 'Usuario' },
     fecha: { type: Date, default: Date.now }
 });

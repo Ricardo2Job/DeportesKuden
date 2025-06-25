@@ -17,7 +17,7 @@ const typeDefs = gql`
         correo: String!
         telefono: String!
         rol: String!
-        direccion: Direccion
+        direccion: String!
     }
 
     input UsuarioInput {
@@ -26,7 +26,7 @@ const typeDefs = gql`
         correo: String!
         telefono: String!
         rol: String!
-        direccion: ID!
+        direccion: String!
     }
     
     # DEFINICION DE DIRECCION

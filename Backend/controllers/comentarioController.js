@@ -1,27 +1,35 @@
-import e from 'express';
-import { comentarios } from '../models/modelSchemas.js';
+import { Comentarios } from '../models/modelSchemas.js';
 
-export const nuevoComentario = async (req, res) => {
+export const crearComentario = async (req, res) => {
   try {
-    const { user, comentario } = req.body;
-    const newComment = new comentarios({ user, message });
-    await newComment.save();
-    res.status(201).json(newComment);
+    const { comentario, etiqueta, usuario } = req.body;
+
+    const nuevoComentario = new Comentarios({
+      comentario,
+      etiqueta,
+      usuario  // este debe ser el _id del usuario
+    });
+
+    const guardado = await nuevoComentario.save();
+    res.status(201).json({ mensaje: 'Comentario creado', comentario: guardado });
   } catch (error) {
-    res.status(500).json({ error: 'Error al guardar el comentario' });
+    throw new Error('Error al crear comentario:', error);
   }
 };
 
-export const getComments = async (req, res) => {
+export const getComentarios = async (req, res) => {
   try {
-    const comments = await Comment.find().sort({ date: -1 });
-    res.status(200).json(comments);
+    const comentarios = await Comentario.find()
+      .populate('usuario', 'nombre email') // opcional: ajusta campos
+      .sort({ fecha: -1 });
+
+    res.status(200).json(comentarios);
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener los comentarios' });
+    throw new Error('Error al obtener comentarios:', error);
   }
 };
 
 export default {
-  createComment,
-  getComments
+  crearComentario,
+  getComentarios
 };

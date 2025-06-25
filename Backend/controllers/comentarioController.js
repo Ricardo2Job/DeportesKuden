@@ -1,9 +1,10 @@
-const Comment = require('../models/Comment');
+import e from 'express';
+import { comentarios } from '../models/modelSchemas.js';
 
-exports.createComment = async (req, res) => {
+export const nuevoComentario = async (req, res) => {
   try {
-    const { user, message } = req.body;
-    const newComment = new Comment({ user, message });
+    const { user, comentario } = req.body;
+    const newComment = new comentarios({ user, message });
     await newComment.save();
     res.status(201).json(newComment);
   } catch (error) {
@@ -11,11 +12,16 @@ exports.createComment = async (req, res) => {
   }
 };
 
-exports.getComments = async (req, res) => {
+export const getComments = async (req, res) => {
   try {
     const comments = await Comment.find().sort({ date: -1 });
     res.status(200).json(comments);
   } catch (error) {
     res.status(500).json({ error: 'Error al obtener los comentarios' });
   }
+};
+
+export default {
+  createComment,
+  getComments
 };

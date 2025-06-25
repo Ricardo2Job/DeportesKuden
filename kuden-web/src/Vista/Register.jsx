@@ -82,7 +82,7 @@ const Register = () => {
           required
         />
         <button type="submit">Registrarse</button>
-        <p>¿Ya tienes cuenta? <a href="/">Inicia sesión</a></p>
+        <p>¿Ya tienes cuenta? <a href="/login">Inicia sesión</a></p>
       </form>
     </div>
   );

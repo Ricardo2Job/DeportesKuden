@@ -21,7 +21,7 @@ const Login = () => {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         alert("Inicio de sesión exitoso");
-        window.location.href = "/"; // Redirigir al inicio
+        window.location.href = "/inicio"; // Redirigir al inicio
       } else {
         alert("Error al iniciar sesión. Por favor, verifica tus credenciales.");
       }

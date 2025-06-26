@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import html2canvas from 'html2canvas';
 
 // Importa cada parte de las imágenes
 import camisetaFrenteCuello from './Imagenes/camiseta_frente_cuello.png';
@@ -51,13 +52,14 @@ const Custom = () => {
     derecha: []
   });
   const [positions, setPositions] = useState({
-    frente: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
-    espalda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
-    izquierda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } },
-    derecha: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 } }
+    frente: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 }, logos: [] },
+    espalda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 }, logos: [] },
+    izquierda: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 }, logos: [] },
+    derecha: { name: { x: 50, y: 10 }, number: { x: 50, y: 50 }, logos: [] }
   });
   const [dragging, setDragging] = useState({ type: null, view: null, index: null });
   const [imageError, setImageError] = useState(null);
+  const [diseñoSubidoExito, setDiseñoSubidoExito] = useState('');
 
   const nameRef = useRef(null);
   const numberRef = useRef(null);
@@ -185,14 +187,44 @@ const Custom = () => {
 
   const handleLogoUpload = (e) => {
     const files = Array.from(e.target.files);
-    const newLogos = files.map((file) => URL.createObjectURL(file));
-    setShirtLogos({ ...shirtLogos, [selectedView]: [...shirtLogos[selectedView], ...newLogos] });
+    const newLogos = files.map((file) => ({
+      id: Date.now() + Math.random(),
+      url: URL.createObjectURL(file),
+      position: { x: 50, y: 50 },
+      size: { width: 100, height: 100 }
+    }));
+
+    setShirtLogos({
+      ...shirtLogos,
+      [selectedView]: [...shirtLogos[selectedView], ...newLogos],
+    });
+
+    setPositions({
+      ...positions,
+      [selectedView]: {
+        ...positions[selectedView],
+        logos: [...positions[selectedView].logos, ...newLogos.map(logo => logo.position)]
+      }
+    });
   };
 
   const handleRemoveLogo = (index) => {
     const updatedLogos = [...shirtLogos[selectedView]];
     updatedLogos.splice(index, 1);
-    setShirtLogos({ ...shirtLogos, [selectedView]: updatedLogos });
+    setShirtLogos({
+      ...shirtLogos,
+      [selectedView]: updatedLogos,
+    });
+
+    const updatedPositions = [...positions[selectedView].logos];
+    updatedPositions.splice(index, 1);
+    setPositions({
+      ...positions,
+      [selectedView]: {
+        ...positions[selectedView],
+        logos: updatedPositions
+      }
+    });
   };
 
   const handleNameChange = (e) => {
@@ -208,6 +240,15 @@ const Custom = () => {
     if (value === "" || (num >= 1 && num <= 99)) {
       setShirtNumber(value);
     }
+  };
+
+  const handleSizeChange = (index, dimension, value) => {
+    const updatedLogos = [...shirtLogos[selectedView]];
+    updatedLogos[index].size[dimension] = value;
+    setShirtLogos({
+      ...shirtLogos,
+      [selectedView]: updatedLogos,
+    });
   };
 
   const renderStars = (rating, clickable = false, onClickFn) => {
@@ -236,7 +277,7 @@ const Custom = () => {
       logos: shirtLogos,
       positions
     };
-    alert("Diseño guardado exitosamente!");
+    setDiseñoSubidoExito('¡Diseño guardado con éxito!');
     console.log("Diseño guardado:", design);
   };
 
@@ -251,17 +292,46 @@ const Custom = () => {
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
-    setPositions(prevPositions => ({
-      ...prevPositions,
-      [dragging.view]: {
-        ...prevPositions[dragging.view],
-        [dragging.type]: { x, y }
-      }
-    }));
+    if (dragging.type === 'logo') {
+      const updatedPositions = [...positions[dragging.view].logos];
+      updatedPositions[dragging.index] = { x, y };
+      setPositions({
+        ...positions,
+        [dragging.view]: {
+          ...positions[dragging.view],
+          logos: updatedPositions
+        }
+      });
+    } else {
+      setPositions(prevPositions => ({
+        ...prevPositions,
+        [dragging.view]: {
+          ...prevPositions[dragging.view],
+          [dragging.type]: { x, y }
+        }
+      }));
+    }
   };
 
   const handleMouseUp = () => {
     setDragging({ type: null, view: null, index: null });
+  };
+
+  const captureAndUploadViews = async () => {
+    const views = ["frente", "espalda", "izquierda", "derecha"];
+    const capturedImages = [];
+
+    for (const view of views) {
+      setSelectedView(view);
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const canvas = await html2canvas(document.querySelector('.shirt-preview'));
+      const dataURL = canvas.toDataURL('image/png');
+      capturedImages.push({ view, dataURL });
+    }
+
+    setDiseñoSubidoExito('¡Diseño subido con éxito!');
+    console.log("Capturas de vistas:", capturedImages);
   };
 
   return (
@@ -294,20 +364,20 @@ const Custom = () => {
         }
 
         .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 2rem;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(20px);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    border-bottom: 2px solid #666;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    width: 100vw;
-    margin-left: calc(-50vw + 50%);
-  }
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 1rem 2rem;
+          background: rgba(0, 0, 0, 0.95);
+          backdrop-filter: blur(20px);
+          position: sticky;
+          top: 0;
+          z-index: 1000;
+          border-bottom: 2px solid #666;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+          width: 100vw;
+          margin-left: calc(-50vw + 50%);
+        }
 
         .logo {
           height: 45px;
@@ -560,7 +630,7 @@ const Custom = () => {
           align-items: center;
           justify-content: center;
           box-shadow: none;
-          overflow: hidden;
+          overflow: visible;
           transition: all 0.3s ease;
         }
 
@@ -814,6 +884,21 @@ const Custom = () => {
           font-size: 12px;
         }
 
+        .size-controls {
+          display: flex;
+          flex-direction: column;
+          margin-top: 10px;
+        }
+
+        .size-controls label {
+          margin-bottom: 5px;
+          font-size: 0.8rem;
+        }
+
+        .size-slider {
+          width: 100%;
+        }
+
         .action-buttons {
           display: flex;
           gap: 15px;
@@ -824,9 +909,9 @@ const Custom = () => {
           background: linear-gradient(45deg, #dc2626, #ef4444);
           color: white;
           border: none;
-          padding: 15px 30px;
+          padding: 8px 16px; /* Ajustado para ser más pequeño */
           border-radius: 8px;
-          font-size: 1.1rem;
+          font-size: 0.9rem; /* Tamaño de fuente reducido */
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -842,9 +927,9 @@ const Custom = () => {
           background: rgba(136, 136, 136, 0.2);
           color: #888;
           border: 1px solid #888;
-          padding: 15px 30px;
+          padding: 8px 16px; /* Ajustado para ser más pequeño */
           border-radius: 8px;
-          font-size: 1.1rem;
+          font-size: 0.9rem; /* Tamaño de fuente reducido */
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
@@ -1062,15 +1147,28 @@ const Custom = () => {
               onMouseLeave={handleMouseUp}
             >
               {shirtLogos[selectedView].map((logo, index) => (
-                <img
-                  key={index}
-                  ref={el => logoRefs.current[index] = el}
-                  src={logo}
-                  alt="Logo"
-                  className="shirt-logo"
-                  style={{ top: `${positions[selectedView]?.logo?.y || 50}%`, left: `${positions[selectedView]?.logo?.x || 50}%` }}
+                <div
+                  key={logo.id}
+                  style={{
+                    position: 'absolute',
+                    top: `${positions[selectedView].logos[index]?.y || 50}%`,
+                    left: `${positions[selectedView].logos[index]?.x || 50}%`,
+                    transform: 'translate(-50%, -50%)',
+                    zIndex: 10,
+                    cursor: 'move'
+                  }}
                   onMouseDown={(e) => handleMouseDown(e, 'logo', index)}
-                />
+                >
+                  <img
+                    src={logo.url}
+                    alt="Logo"
+                    style={{
+                      width: `${logo.size.width}px`,
+                      height: `${logo.size.height}px`,
+                      borderRadius: '8px'
+                    }}
+                  />
+                </div>
               ))}
               {Object.entries(getShirtImages()).map(([key, part]) => (
                 <canvas
@@ -1240,9 +1338,27 @@ const Custom = () => {
                   </div>
                   <div className="uploaded-images">
                     {shirtLogos[selectedView].map((logo, index) => (
-                      <div key={index} className="uploaded-image-container">
-                        <img src={logo} alt={`Logo ${index}`} className="uploaded-image" />
+                      <div key={logo.id} className="uploaded-image-container">
+                        <img src={logo.url} alt={`Logo ${index}`} className="uploaded-image" style={{ width: '80px', height: '80px' }} />
                         <div className="remove-image" onClick={() => handleRemoveLogo(index)}>X</div>
+                        <div className="size-controls">
+                          <label>Ancho: {logo.size.width}px</label>
+                          <input
+                            type="range"
+                            min="50"
+                            max="200"
+                            value={logo.size.width}
+                            onChange={(e) => handleSizeChange(index, 'width', parseInt(e.target.value))}
+                          />
+                          <label>Alto: {logo.size.height}px</label>
+                          <input
+                            type="range"
+                            min="50"
+                            max="200"
+                            value={logo.size.height}
+                            onChange={(e) => handleSizeChange(index, 'height', parseInt(e.target.value))}
+                          />
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -1251,9 +1367,11 @@ const Custom = () => {
             </div>
 
             <div className="action-buttons">
-              <button className="btn-secondary">Cancelar</button>
+              <button className="btn-secondary" onClick={() => {}}>Cancelar</button>
               <button className="btn-primary" onClick={handleSaveDesign}>Guardar Diseño</button>
+              <button className="btn-primary" onClick={captureAndUploadViews}>Subir Diseño</button>
             </div>
+            {diseñoSubidoExito && <p className="success-message">{diseñoSubidoExito}</p>}
           </div>
         </div>
 

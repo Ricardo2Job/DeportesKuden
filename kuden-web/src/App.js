@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import Bomberos from './Vista/Bomberos';
 import Custom from './Vista/Custom';
@@ -13,11 +13,12 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/inicio" replace />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/inicio" element={<Inicio />} />
-        <Route path="/custom" element={<Custom />} /> 
-        <Route path="/company" element={<Company />} /> 
+        <Route path="/custom" element={<Custom />} />
+        <Route path="/company" element={<Company />} />
         <Route path="/Bomberos" element={<Bomberos />} />
         <Route path="/Administracion" element={<Admin />} />
         <Route path="/Productos" element={<Productos />} />

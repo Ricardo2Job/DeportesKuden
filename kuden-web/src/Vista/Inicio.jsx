@@ -1,4 +1,16 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+// Importa las imágenes
+import imagen1 from './Imagenes/6A.png';
+import imagen2 from './Imagenes/2.png';
+import imagen3 from './Imagenes/3.png';
+import imagen3A from './Imagenes/3A.png';
+import imagen7A from './Imagenes/7A.png';
+
+// Importa las imágenes del carrusel
+import Carrusel1 from './Imagenes/carrusel.png';
+import Carrusel2 from './Imagenes/carrusel2.png';
+import Carrusel3 from './Imagenes/carrusel3.png';
 
 const App = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -45,10 +57,7 @@ const App = () => {
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }, (_, index) => (
-      <span
-        key={index}
-        className={`star ${index < rating ? 'filled' : ''}`}
-      >
+      <span key={index} className={`star ${index < rating ? 'filled' : ''}`}>
         ★
       </span>
     ));
@@ -606,15 +615,7 @@ const App = () => {
         <nav className="nav">
           <a href="/inicio" className="nav-link">Inicio</a>
 
-          <div className="dropdown">
-            <a href="/productos" className="dropbtn">Productos ▼</a>
-            <div className="dropdown-content">
-              <a href="/poleras">Poleras Deportivas</a>
-              <a href="/shorts">Shorts</a>
-              <a href="/accesorios">Accesorios</a>
-            </div>
-          </div>
-
+          <a href="/productos" className="nav-link">Productos</a>
           <a href="/company" className="nav-link">Nuestra Compañía</a>
           <a href="/custom" className="nav-link">Personalización</a>
           <a href="/bomberos" className="nav-link boton-nav-rojo">Bomberos Chile</a>
@@ -638,16 +639,15 @@ const App = () => {
       <div className="carousel-container">
         <div className="carousel">
           <div className="carousel-overlay"></div>
-          {[0, 1, 2].map((index) => (
+          {[Carrusel1, Carrusel2, Carrusel3].map((image, index) => (
             <div
               key={index}
               className={`carousel-image ${currentImage === index ? 'active' : ''}`}
               style={{
-                backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400"><rect width="800" height="400" fill="%23${index === 0 ? '333' : index === 1 ? '444' : '555'}"/><text x="400" y="200" text-anchor="middle" fill="white" font-size="48">Imagen ${index + 1}</text></svg>')`
+                backgroundImage: `url(${image})`
               }}
             ></div>
           ))}
-
           <div className="carousel-indicators">
             {[0, 1, 2].map((index) => (
               <div
@@ -665,15 +665,15 @@ const App = () => {
         <h2>Nuestros Productos Destacados</h2>
         <div className="products-grid">
           {[
-            { name: "Poleras Deportivas", desc: "Diseños modernos y materiales de alta calidad" },
-            { name: "Shorts Deportivos", desc: "Comodidad y estilo para tu rendimiento" },
-            { name: "Accesorios", desc: "Complementa tu look deportivo" }
+            { name: "Poleras Deportivas", desc: "Diseños modernos y materiales de alta calidad", image: imagen3A },
+            { name: "Shorts Deportivos", desc: "Comodidad y estilo para tu rendimiento", image: imagen1 },
+            { name: "Accesorios", desc: "Complementa tu look deportivo", image: imagen7A }
           ].map((product, index) => (
             <div key={index} className="product-card">
               <div
                 className="product-image"
                 style={{
-                  backgroundImage: `url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%23${index === 0 ? 'dc2626' : index === 1 ? '666' : '888'}"/><text x="150" y="100" text-anchor="middle" fill="white" font-size="24">${product.name}</text></svg>')`
+                  backgroundImage: `url(${product.image})`
                 }}
               ></div>
               <h3 style={{ color: '#888', marginBottom: '10px' }}>{product.name}</h3>
@@ -681,7 +681,12 @@ const App = () => {
             </div>
           ))}
         </div>
-        <button className="ver-mas-btn">Ver Más Productos</button>
+        <button
+  className="ver-mas-btn"
+  onClick={() => window.location.href = '/productos'}
+>
+  Ver Más Productos
+</button>
       </section>
 
       {/* Sección de Personalización */}
@@ -695,7 +700,7 @@ const App = () => {
             permite visualizar tus ideas en tiempo real y crear equipaciones
             verdaderamente profesionales.
           </p>
-          <button className="custom-btn">Comenzar Personalizacisón</button>
+          <button className="custom-btn">Comenzar Personalización</button>
         </div>
       </section>
 

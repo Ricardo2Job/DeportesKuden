@@ -694,14 +694,7 @@ const NuestraCompania = () => {
         <nav className="nav">
           <a href="/inicio" className="nav-link">Inicio</a>
 
-          <div className="dropdown">
-            <a href="/productos" className="dropbtn">Productos ▼</a>
-            <div className="dropdown-content">
-              <a href="/poleras">Poleras Deportivas</a>
-              <a href="/shorts">Shorts</a>
-              <a href="/accesorios">Accesorios</a>
-            </div>
-          </div>
+          <a href="/productos" className="nav-link">Productos</a>
 
           <a href="/company" className="nav-link active">Nuestra Compañía</a>
           <a href="/custom" className="nav-link">Personalización</a>

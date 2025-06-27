@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import logo from './Imagenes/Logo.png'; // Importa el logo
 
 const NuestraCompania = () => {
   const [currentStat, setCurrentStat] = useState(0);
@@ -22,7 +23,7 @@ const NuestraCompania = () => {
   ];
 
   const disciplines = [
-    "Fútbol", "Voleibol", "Básquetbol", "Rugby", "Hockey", 
+    "Fútbol", "Voleibol", "Básquetbol", "Rugby",
     "Tenis", "Hándbol", "Running", "Ropa Corporativa"
   ];
 
@@ -42,14 +43,14 @@ const NuestraCompania = () => {
       stats.forEach((stat, index) => {
         let current = 0;
         const increment = stat.value / steps;
-        
+
         const timer = setInterval(() => {
           current += increment;
           if (current >= stat.value) {
             current = stat.value;
             clearInterval(timer);
           }
-          
+
           setCounters(prev => ({
             ...prev,
             [index === 0 ? 'años' : index === 1 ? 'clientes' : index === 2 ? 'productos' : 'satisfaccion']: Math.floor(current)
@@ -104,19 +105,12 @@ const NuestraCompania = () => {
 
         .logo {
           height: 45px;
-          width: 160px;
-          background: linear-gradient(45deg, #dc2626, #ef4444);
-          border-radius: 8px;
+          width: auto;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: bold;
-          color: white;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          font-size: 0.9rem;
         }
 
         .logo:hover {
@@ -689,13 +683,13 @@ const NuestraCompania = () => {
 
       {/* Header */}
       <header className="header">
-        <div className="logo">Deportes Kuden</div>
+        <div className="logo">
+          <img src={logo} alt="Logo" style={{ height: '100%', width: 'auto' }} />
+        </div>
 
         <nav className="nav">
           <a href="/inicio" className="nav-link">Inicio</a>
-
           <a href="/productos" className="nav-link">Productos</a>
-
           <a href="/company" className="nav-link active">Nuestra Compañía</a>
           <a href="/custom" className="nav-link">Personalización</a>
           <a href="/bomberos" className="nav-link boton-nav-rojo">Bomberos Chile</a>
@@ -720,8 +714,8 @@ const NuestraCompania = () => {
         <div className="hero-content">
           <h1>Nuestra Compañía</h1>
           <p>
-            Kuden es una marca chilena dedicada a la confección de vestuario deportivo 
-            de calidad para alto rendimiento. Con más de una década de experiencia, 
+            Kuden es una marca chilena dedicada a la confección de vestuario deportivo
+            de calidad para alto rendimiento. Con más de una década de experiencia,
             hemos vestido a los mejores equipos y atletas del país.
           </p>
         </div>
@@ -749,30 +743,32 @@ const NuestraCompania = () => {
         </div>
       </section>
 
-      {/* About Section */}
+     {/* About Section */}
       <section className="about-section">
         <div className="about-content">
           <div className="about-text">
             <h2>Quiénes Somos</h2>
             <p>
-              Con más de 10 años de experiencia en el mercado, Kuden se ha consolidado 
-              como una de las marcas líderes en la confección de vestuario deportivo 
-              en Chile. Nuestra pasión por el deporte y el compromiso con la calidad 
+              Con más de 10 años de experiencia en el mercado, Kuden se ha consolidado
+              como una de las marcas líderes en la confección de vestuario deportivo
+              en Chile. Nuestra pasión por el deporte y el compromiso con la calidad
               nos ha llevado a trabajar con importantes marcas e instituciones.
             </p>
             <p>
-              Estamos convencidos de que el vestuario juega un rol fundamental en el 
-              desempeño exitoso de cualquier actividad deportiva o recreativa. Por eso, 
-              cada prenda que confeccionamos está diseñada con los más altos estándares 
+              Estamos convencidos de que el vestuario juega un rol fundamental en el
+              desempeño exitoso de cualquier actividad deportiva o recreativa. Por eso,
+              cada prenda que confeccionamos está diseñada con los más altos estándares
               de calidad y rendimiento.
             </p>
             <p>
-              Nuestro equipo de profesionales altamente capacitados trabaja día a día 
-              para ofrecer soluciones integrales que satisfagan las necesidades específicas 
+              Nuestro equipo de profesionales altamente capacitados trabaja día a día
+              para ofrecer soluciones integrales que satisfagan las necesidades específicas
               de cada cliente, desde equipos profesionales hasta instituciones educativas.
             </p>
           </div>
-          <div className="about-image"></div>
+          <div className="about-image">
+            <img src={logo} alt="Logo" style={{ width: '100%', height: 'auto', borderRadius: '20px' }} />
+          </div>
         </div>
       </section>
 
@@ -807,12 +803,12 @@ const NuestraCompania = () => {
           <div className="contact-card">
             <div className="contact-icon">📧</div>
             <div className="contact-title">Email</div>
-            <div className="contact-detail">info@deporteskuden.cl</div>
+            <div className="contact-detail">KudenDeportes@gmail.com</div>
           </div>
           <div className="contact-card">
             <div className="contact-icon">📱</div>
             <div className="contact-title">Teléfono</div>
-            <div className="contact-detail">+56 9 1234 5678</div>
+            <div className="contact-detail">+569 31840363</div>
           </div>
           <div className="contact-card">
             <div className="contact-icon">📍</div>
@@ -853,8 +849,8 @@ const NuestraCompania = () => {
           </div>
           <div className="footer-section">
             <h3>Contacto</h3>
-            <p>📧 info@deporteskuden.cl</p>
-            <p>📱 +56 9 1234 5678</p>
+            <p>📧 DeportesKuden@gmail.com</p>
+            <p>📱 +569 31840363</p>
             <p>📍 Santiago, Chile</p>
           </div>
         </div>

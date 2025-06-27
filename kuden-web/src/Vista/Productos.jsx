@@ -1,20 +1,29 @@
 import { useState, useEffect } from 'react';
-
-
+import imagen1 from './Imagenes/1A.png';
+import imagen2 from './Imagenes/2.png';
+import imagen3 from './Imagenes/3.png';
+import imagen3A from './Imagenes/3A.png';
+import imagen4 from './Imagenes/4.png';
+import imagen5 from './Imagenes/5.png';
+import imagen6 from './Imagenes/6.png';
+import imagen6A from './Imagenes/6A.png';
+import imagen7 from './Imagenes/7.png';
+import imagen7A from './Imagenes/7A.png';
+import imagen8 from './Imagenes/8.png';
 
 const ProductosPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [sortBy, setSortBy] = useState('nombre');
 
-  // Productos de ejemplo
+  // Productos de ejemplo con imágenes importadas
   const productos = [
     {
       id: 1,
       nombre: "Polera Deportiva Clásica",
       categoria: "poleras",
       precio: 15990,
-      imagen: "1.png",
+      imagen: imagen1,
       descripcion: "Polera deportiva de alta calidad con diseño clásico y materiales transpirables",
       colores: ["Rojo", "Azul", "Negro", "Blanco"],
       tallas: ["S", "M", "L", "XL", "XXL"],
@@ -25,7 +34,7 @@ const ProductosPage = () => {
       nombre: "Polera Dry-Fit Pro",
       categoria: "poleras",
       precio: 22990,
-      imagen: "2.png",
+      imagen: imagen2,
       descripcion: "Tecnología Dry-Fit para máximo rendimiento y comodidad durante el ejercicio",
       colores: ["Negro", "Gris", "Azul Marino"],
       tallas: ["S", "M", "L", "XL"],
@@ -36,7 +45,7 @@ const ProductosPage = () => {
       nombre: "Short Deportivo Básico",
       categoria: "shorts",
       precio: 12990,
-      imagen: "3.png",
+      imagen: imagen3,
       descripcion: "Short cómodo y versátil para todo tipo de actividades deportivas",
       colores: ["Negro", "Gris", "Azul"],
       tallas: ["S", "M", "L", "XL", "XXL"],
@@ -47,7 +56,7 @@ const ProductosPage = () => {
       nombre: "Short Running Elite",
       categoria: "shorts",
       precio: 18990,
-      imagen: "4.png",
+      imagen: imagen4,
       descripcion: "Diseñado especialmente para running con tecnología anti-rozaduras",
       colores: ["Negro", "Azul", "Rojo"],
       tallas: ["S", "M", "L", "XL"],
@@ -58,7 +67,7 @@ const ProductosPage = () => {
       nombre: "Medias Deportivas Pack x3",
       categoria: "accesorios",
       precio: 8990,
-      imagen: "5.png",
+      imagen: imagen5,
       descripcion: "Pack de 3 pares de medias deportivas con refuerzo en talón y puntera",
       colores: ["Blanco", "Negro", "Mixto"],
       tallas: ["S", "M", "L"],
@@ -69,7 +78,7 @@ const ProductosPage = () => {
       nombre: "Gorra Deportiva Ajustable",
       categoria: "accesorios",
       precio: 9990,
-      imagen: "6.png",
+      imagen: imagen6,
       descripcion: "Gorra con protección UV y ajuste perfecto para entrenamientos",
       colores: ["Negro", "Blanco", "Rojo", "Azul"],
       tallas: ["Única"],
@@ -80,7 +89,7 @@ const ProductosPage = () => {
       nombre: "Polera Térmica Manga Larga",
       categoria: "poleras",
       precio: 25990,
-      imagen: "7.png",
+      imagen: imagen7,
       descripcion: "Perfecta para entrenamientos en clima frío con tecnología térmica",
       colores: ["Negro", "Gris", "Blanco"],
       tallas: ["S", "M", "L", "XL", "XXL"],
@@ -91,7 +100,7 @@ const ProductosPage = () => {
       nombre: "Short Compresión Pro",
       categoria: "shorts",
       precio: 24990,
-      imagen: "8.png",
+      imagen: imagen8,
       descripcion: "Short de compresión para mejor rendimiento y recuperación muscular",
       colores: ["Negro", "Azul Marino"],
       tallas: ["S", "M", "L", "XL"],
@@ -104,7 +113,6 @@ const ProductosPage = () => {
       ? productos
       : productos.filter(producto => producto.categoria === selectedCategory);
 
-    // Ordenar productos
     filtered.sort((a, b) => {
       switch(sortBy) {
         case 'precio-asc':
@@ -123,10 +131,6 @@ const ProductosPage = () => {
 
   const formatPrice = (price) => {
     return price.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
-  };
-
-  const getImageUrl = (imageName) => {
-    return `../Imagenes/${imageName}`;
   };
 
   return (
@@ -785,7 +789,7 @@ const ProductosPage = () => {
               <div className="product-image-container">
                 <img
                   className="product-image"
-                  src={getImageUrl(producto.imagen)}
+                  src={producto.imagen}
                   alt={producto.nombre}
                 />
                 {producto.destacado && (
@@ -805,12 +809,12 @@ const ProductosPage = () => {
                       className="color-dot"
                       style={{
                         backgroundColor: color === 'Rojo' ? '#dc2626' :
-                                      color === 'Azul' ? '#3b82f6' :
-                                      color === 'Negro' ? '#000' :
-                                      color === 'Blanco' ? '#fff' :
-                                      color === 'Gris' ? '#6b7280' :
-                                      color === 'Azul Marino' ? '#1e3a8a' :
-                                      color === 'Mixto' ? '#6b7280' : '#888'
+                          color === 'Azul' ? '#3b82f6' :
+                          color === 'Negro' ? '#000' :
+                          color === 'Blanco' ? '#fff' :
+                          color === 'Gris' ? '#6b7280' :
+                          color === 'Azul Marino' ? '#1e3a8a' :
+                          color === 'Mixto' ? '#6b7280' : '#888'
                       }}
                       title={color}
                     />
@@ -860,8 +864,8 @@ const ProductosPage = () => {
 
           <div className="footer-section">
             <h3>Contacto</h3>
-            <p>📞 +56 9 1234 5678</p>
-            <p>📧 info@deporteskuden.cl</p>
+            <p>📞 +569 31840363</p>
+            <p>📧 KudenDeportes@deporteskuden.cl</p>
             <p>📍 Santiago, Chile</p>
           </div>
         </div>

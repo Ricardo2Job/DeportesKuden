@@ -287,19 +287,37 @@ const Custom = () => {
     });
   };
 
-  const handleSaveDesign = () => {
-    const design = {
-      model: selectedModel,
-      name: shirtName,
-      number: shirtNumber,
-      colors: shirtColors,
-      size: shirtSize,
-      logos: shirtLogos,
-      positions
-    };
-    setDiseñoSubidoExito('¡Diseño guardado con éxito!');
-    console.log("Diseño guardado:", design);
+const handleSaveDesign = async () => {
+  // 1. Guardar el diseño como lo hacías antes
+  const design = {
+    model: selectedModel,
+    name: shirtName,
+    number: shirtNumber,
+    colors: shirtColors,
+    size: shirtSize,
+    logos: shirtLogos,
+    positions
   };
+
+  console.log("Diseño guardado:", design);
+  setDiseñoSubidoExito('¡Diseño guardado con éxito, favor enviar a Deporteskuden@gmail.com!');
+
+  const preview = document.querySelector(".shirt-preview");
+  if (!preview) {
+    alert("No se encontró la vista previa de la camiseta.");
+    return;
+  }
+
+  const canvas = await html2canvas(preview);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "mi_camiseta.png";
+  link.click();
+};
+
 
   const handleMouseDown = (e, type, index) => {
     setDragging({ type, view: selectedView, index });

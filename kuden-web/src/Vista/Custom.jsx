@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import html2canvas from 'html2canvas';
+import logo from './Imagenes/Logo.png'; // Importa el logo
 
 // Importa cada parte de las imágenes
 import camisetaFrenteCuello from './Imagenes/camiseta_frente_cuello.png';
@@ -418,6 +419,7 @@ const handleSaveDesign = async () => {
           background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
         }
 
+       /* Header */
         .header {
           display: flex;
           justify-content: space-between;
@@ -436,19 +438,12 @@ const handleSaveDesign = async () => {
 
         .logo {
           height: 45px;
-          width: 160px;
-          background: linear-gradient(45deg, #dc2626, #ef4444);
-          border-radius: 8px;
+          width: auto;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: bold;
-          color: white;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          font-size: 0.9rem;
         }
 
         .logo:hover {
@@ -1146,12 +1141,15 @@ const handleSaveDesign = async () => {
       `}</style>
 
       <header className="header">
-        <div className="logo">Deportes Kuden</div>
+                    <div className="logo">
+                      <img src={logo} alt="Logo" style={{ height: '100%', width: 'auto' }} />
+                    </div>
+      
         <nav className="nav">
           <a href="/inicio" className="nav-link">Inicio</a>
           <a href="/productos" className="nav-link">Productos</a>
           <a href="/company" className="nav-link">Nuestra Compañía</a>
-          <a href="/customization" className="nav-link active">Personalización</a>
+          <a href="/custom" className="nav-link active">Personalización</a>
           <a href="/bomberos" className="nav-link boton-nav-rojo">Bomberos Chile</a>
         </nav>
         <div className="user-menu">

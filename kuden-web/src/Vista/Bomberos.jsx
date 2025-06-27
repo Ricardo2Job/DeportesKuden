@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import logo from './Imagenes/Logo.png'; // Importa el logo
 
 const Bomberos = () => {
   const [currentImage, setCurrentImage] = useState(0);
@@ -98,27 +99,20 @@ const Bomberos = () => {
           position: sticky;
           top: 0;
           z-index: 1000;
-          border-bottom: 2px solid #dc2626;
-          box-shadow: 0 4px 20px rgba(220, 38, 38, 0.3);
+          border-bottom: 2px solid #666;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
           width: 100vw;
           margin-left: calc(-50vw + 50%);
         }
 
         .logo {
           height: 45px;
-          width: 160px;
-          background: linear-gradient(45deg, #dc2626, #ef4444);
-          border-radius: 8px;
+          width: auto;
           display: flex;
           align-items: center;
           justify-content: center;
-          font-weight: bold;
-          color: white;
           cursor: pointer;
           transition: all 0.3s ease;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          font-size: 0.9rem;
         }
 
         .logo:hover {
@@ -610,7 +604,9 @@ const Bomberos = () => {
 
       {/* Header */}
       <header className="header">
-        <div className="logo">Deportes Kuden</div>
+              <div className="logo">
+                <img src={logo} alt="Logo" style={{ height: '100%', width: 'auto' }} />
+              </div>
 
         <nav className="nav">
           <a href="/inicio" className="nav-link">Inicio</a>

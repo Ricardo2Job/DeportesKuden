@@ -297,6 +297,7 @@ const Custom = () => {
   };
 
 const handleSaveDesign = async () => {
+  // 1. Guardar el diseño como lo hacías antes
   const design = {
     model: selectedModel,
     name: shirtName,
@@ -310,31 +311,23 @@ const handleSaveDesign = async () => {
   console.log("Diseño guardado:", design);
   setDiseñoSubidoExito('¡Diseño guardado con éxito, favor enviar a Deporteskuden@gmail.com!');
 
-  const views = ["frente", "espalda", "izquierda", "derecha"];
-
-  for (const view of views) {
-    // Cambiar la vista actual
-    setSelectedView(view);
-
-    // Esperar a que se renderice
-    await new Promise(resolve => setTimeout(resolve, 200)); // puede ajustarse según performance
-
-    const preview = document.querySelector(".shirt-preview");
-    if (!preview) {
-      alert(`No se encontró la vista previa para la vista "${view}"`);
-      continue;
-    }
-
-    const canvas = await html2canvas(preview);
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `camiseta_${view}.png`;
-    link.click();
+  // 2. Capturar y descargar imagen
+  const preview = document.querySelector(".shirt-preview");
+  if (!preview) {
+    alert("No se encontró la vista previa de la camiseta.");
+    return;
   }
+
+  const canvas = await html2canvas(preview);
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "mi_camiseta.png";
+  link.click();
 };
+
 
   const handleMouseDown = (e, type, index) => {
     setDragging({ type, view: selectedView, index });

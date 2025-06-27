@@ -64,7 +64,7 @@ async function startServer() {
   await apolloServer.start();
   apolloServer.applyMiddleware({ app, path: '/graphql', cors: false });
   app.use('/api/auth', authRoutes);
-  app.use('/api/comments', commentRoutes);
+  app.use('/api', commentRoutes);
   app.listen(5000, () => {
     console.log('🚀 Servidor corriendo en:');
     console.log(`   - GraphQL: http://localhost:5000/graphql`);

@@ -98,46 +98,10 @@ const resolvers = {
                 throw error;
             }
         },
-        async getUsuariosByNombre (obj, { nombre }){
+        async getUsuarioByNombre (obj, { nombre }){
             try {
-                const usuarios = await Usuario.find({ nombre })
-                    .populate({
-                        path: 'direccion',
-                        populate: [{
-                            path: 'comuna',
-                            model: 'Comuna',
-                            populate: {
-                                path: 'ciudad',
-                                model: 'Ciudad',
-                                populate: {
-                                    path: 'region',
-                                    model: 'Region'
-                                }
-                            }
-                        }]
-                    });
-
-                const usuariosFormateados = usuarios.map(usuario => {
-                    const usuarioObj = usuario.toObject();
-                    if (usuarioObj.direccion) {
-                        if (usuarioObj.direccion.comuna) {
-                            usuarioObj.direccion.comunaId = usuarioObj.direccion.comuna._id;
-                            usuarioObj.direccion.comunaData = {
-                                ...usuarioObj.direccion.comuna,
-                                ciudadId: usuarioObj.direccion.comuna.ciudad._id,
-                                ciudadData: {
-                                    ...usuarioObj.direccion.comuna.ciudad,
-                                    regionId: usuarioObj.direccion.comuna.ciudad.region._id,
-                                    regionData: usuarioObj.direccion.comuna.ciudad.region
-                                }
-                            };
-                            delete usuarioObj.direccion.comuna;
-                        }
-                    }
-                    return usuarioObj;
-                });
-
-                return usuariosFormateados;
+                const usuario = await Usuario.find({ nombre })
+                return usuario[0]; // Retornamos solo el primer usuario encontrado según el schema
             } catch (error) {
                 console.error('Error al obtener los usuarios por nombre:', error);
                 throw error;

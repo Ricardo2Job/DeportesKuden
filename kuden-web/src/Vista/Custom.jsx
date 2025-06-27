@@ -19,7 +19,7 @@ import camisetaDerechaTorsoFrente from './Imagenes/camiseta_derecha_torso_frente
 import camisetaDerechaTorsoEspalda from './Imagenes/camiseta_derecha_torso_espalda.png';
 import camisetaDerechaManga from './Imagenes/camiseta_derecha_manga.png';
 import camisetaDerechaCuello from './Imagenes/camiseta_derecha_cuello.png';
-
+import axios from "axios";
 const Custom = () => {
   const [activeSection, setActiveSection] = useState("modelos");
   const [selectedModel, setSelectedModel] = useState("modelo1");
@@ -43,6 +43,8 @@ const Custom = () => {
       author: "María López"
     }
   ]);
+  const [error, setError] = useState("");
+  const [mensajeExito, setMensajeExito] = useState("");
   const [newRating, setNewRating] = useState(0);
   const [selectedView, setSelectedView] = useState("frente");
   const [shirtLogos, setShirtLogos] = useState({
@@ -164,21 +166,39 @@ const Custom = () => {
     });
   }, [shirtColors, selectedView]);
 
-  const handleAddComment = (e) => {
+  const handleAddComment = async (e) => {
     e.preventDefault();
+
     const commentText = e.target.comment.value.trim();
     const authorName = e.target.author.value.trim() || "Anónimo";
-    if (commentText && newRating > 0) {
-      const newComment = {
-        text: commentText,
-        rating: newRating,
-        author: authorName
-      };
+
+    // Validación
+    if (!commentText || newRating <= 0) {
+      setError("Comentario y calificación son obligatorios");
+      return;
+    }
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/comments", {
+        comentario: commentText,
+        usuario: authorName
+      });
+
+      const newComment = response.data;
+
       setComments([...comments, newComment]);
+      setError("");
+      setMensajeExito("Comentario agregado correctamente"); // Si quieres usarlo como en el otro handle
+
+      // Limpiar campos
       e.target.comment.value = "";
       e.target.author.value = "";
       setNewRating(0);
+    } catch (error) {
+      setError(error.response?.data?.error || "Error al agregar el comentario.");
     }
+
+    console.log("Comentario agregado:", commentText, authorName, newRating);
   };
 
   const handleRatingClick = (value) => {

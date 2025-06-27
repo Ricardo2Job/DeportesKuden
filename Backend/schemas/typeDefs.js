@@ -235,7 +235,7 @@ const typeDefs = gql`
 
         getUsuario(id: ID!): Usuario
         getUsuarios: [Usuario]
-        getUsuariosByNombre(nombre: String!): [Usuario]
+        getUsuarioByNombre(nombre: String!): Usuario
         getUsuariosByRol(rol: String!): [Usuario]
         getUsuariosByComuna(comuna: String!): [Usuario]
         getUsuariosByCiudad(ciudad: String!): [Usuario]

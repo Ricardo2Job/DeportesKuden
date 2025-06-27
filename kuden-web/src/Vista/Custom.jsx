@@ -190,7 +190,7 @@ const Custom = () => {
       // Adaptar estructura para el frontend
       const newComment = {
         id: savedComment._id,
-        comment: savedComment.comentario,
+        text: commentText,
         rating: newRating,
         author: savedComment.usuario?.nombre || authorName,
         date: savedComment.fecha,

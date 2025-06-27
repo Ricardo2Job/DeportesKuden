@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // Importa las imágenes
 import imagen1 from './Imagenes/6A.png';
@@ -16,6 +17,7 @@ const App = () => {
   const [currentImage, setCurrentImage] = useState(0);
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const imageCount = 3;
+  const navigate = useNavigate();
 
   // Testimonios de ejemplo
   const testimonials = [
@@ -61,6 +63,10 @@ const App = () => {
         ★
       </span>
     ));
+  };
+
+  const handleCustomization = () => {
+    navigate('/custom');
   };
 
   return (
@@ -611,16 +617,13 @@ const App = () => {
       {/* Header */}
       <header className="header">
         <div className="logo">Deportes Kuden</div>
-
         <nav className="nav">
           <a href="/inicio" className="nav-link">Inicio</a>
-
           <a href="/productos" className="nav-link">Productos</a>
           <a href="/company" className="nav-link">Nuestra Compañía</a>
           <a href="/custom" className="nav-link">Personalización</a>
           <a href="/bomberos" className="nav-link boton-nav-rojo">Bomberos Chile</a>
         </nav>
-
         <div className="user-menu">
           <div className="dropdown">
             <button className="dropbtn">Usuario ▼</button>
@@ -681,12 +684,9 @@ const App = () => {
             </div>
           ))}
         </div>
-        <button
-  className="ver-mas-btn"
-  onClick={() => window.location.href = '/productos'}
->
-  Ver Más Productos
-</button>
+        <button className="ver-mas-btn" onClick={() => window.location.href = '/productos'}>
+          Ver Más Productos
+        </button>
       </section>
 
       {/* Sección de Personalización */}
@@ -700,7 +700,9 @@ const App = () => {
             permite visualizar tus ideas en tiempo real y crear equipaciones
             verdaderamente profesionales.
           </p>
-          <button className="custom-btn">Comenzar Personalización</button>
+          <button className="custom-btn" onClick={handleCustomization}>
+            Comenzar Personalización
+          </button>
         </div>
       </section>
 

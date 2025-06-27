@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+
+
 const ProductosPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [filteredProducts, setFilteredProducts] = useState([]);

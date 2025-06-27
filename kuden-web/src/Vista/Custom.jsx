@@ -184,7 +184,16 @@ const Custom = () => {
         usuario: authorName
       });
 
-      const newComment = response.data;
+      const savedComment = response.data;
+
+      // Adaptar estructura para el frontend
+      const newComment = {
+        id: savedComment._id,
+        comment: savedComment.comentario,
+        rating: newRating,
+        author: savedComment.usuario?.nombre || authorName,
+        date: savedComment.fecha,
+      };
 
       setComments([...comments, newComment]);
       setError("");

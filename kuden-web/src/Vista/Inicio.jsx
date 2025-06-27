@@ -10,8 +10,8 @@ import imagen7A from './Imagenes/7A.png';
 
 // Importa las imágenes del carrusel
 import Carrusel1 from './Imagenes/carrusel.png';
-import Carrusel2 from './Imagenes/carrusel2.png';
-import Carrusel3 from './Imagenes/carrusel3.png';
+import Carrusel2 from './Imagenes/Carrusel2.png';
+import Carrusel3 from './Imagenes/Carrusel3.png';
 
 const App = () => {
   const [currentImage, setCurrentImage] = useState(0);
